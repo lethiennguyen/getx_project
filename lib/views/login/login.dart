@@ -183,7 +183,6 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
               ),
               errorText: null,
               contentPadding: EdgeInsets.all(16),
-
               hintText: field.hint,
               suffixIcon:
                   isPassword
@@ -221,7 +220,7 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
                       )
                       : null,
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
+                borderSide: BorderSide(color: kBrandOrange),
                 borderRadius: BorderRadius.circular(6),
               ),
               border: OutlineInputBorder(
@@ -229,7 +228,11 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
                 borderRadius: BorderRadius.circular(6),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: kBrandOrange2),
+                borderSide: BorderSide(color: kBrandOrange),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: kBrandOrange),
                 borderRadius: BorderRadius.circular(6),
               ),
             ),
