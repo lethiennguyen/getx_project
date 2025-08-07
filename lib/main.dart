@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/hive_constants.dart';
 import 'package:getx_statemanagement/data/core/api_client.dart';
 import 'package:getx_statemanagement/data/repositories/users_repositories.dart';
-import 'package:getx_statemanagement/views/home/home.dart';
+import 'package:getx_statemanagement/views/home/home_page.dart';
 import 'package:getx_statemanagement/views/login/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -15,17 +15,13 @@ void main() async {
   await Hive.openBox(HiveBoxNames.auth);
   final box = Hive.box(HiveBoxNames.auth);
   final bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
-
   final authRepo = AuthRepository(dio);
   runApp(MyApp(authRepo, initialRoute: isLoggedIn ? '/home' : '/login'));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp(
-    AuthRepository authRepo, {
-    super.key,
-    required String initialRoute,
-  });
+  final String initialRoute;
+  const MyApp(AuthRepository authRepo, {super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +44,9 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       getPages: [
         GetPage(name: '/login', page: () => MyHomeLogin()),
-        GetPage(name: '/home', page: () => LogoutScreen()),
+        GetPage(name: '/home', page: () => LogoutPage()),
       ],
-      home: MyHomeLogin(),
+      initialRoute: initialRoute,
     );
   }
 }
