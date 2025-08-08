@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:getx_statemanagement/views/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
-// cho update vas create
 class ModernInputField extends StatefulWidget {
   final String label;
   final String hintText;
@@ -21,14 +19,11 @@ class ModernInputField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
   });
-
   @override
   State<ModernInputField> createState() => _ModernInputFieldState();
 }
 
 class _ModernInputFieldState extends State<ModernInputField> {
-  bool _obscure = true;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -49,7 +44,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
           focusNode: widget.focusNode,
           controller: widget.controller,
           keyboardType: widget.keyboardType,
-          cursorColor: Colors.white,
+          cursorColor: kBrandOrange,
           style: GoogleFonts.nunitoSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/hive_constants.dart';
 import 'package:getx_statemanagement/data/core/api_client.dart';
@@ -17,6 +18,7 @@ void main() async {
   final box = Hive.box(HiveBoxNames.auth);
   final bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
   final authRepo = AuthRepository(dio);
+  await dotenv.load(fileName: '.env');
   runApp(MyApp(authRepo, initialRoute: isLoggedIn ? '/home' : '/login'));
 }
 

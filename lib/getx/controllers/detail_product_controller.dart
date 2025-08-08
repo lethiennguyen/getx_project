@@ -1,26 +1,38 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/data/model/product.dart';
 import 'package:getx_statemanagement/data/repositories/product_reponsitories.dart';
+import 'package:getx_statemanagement/data/upload_image/image_picker_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../data/dio/dio.dart';
 
 class DetailProductController extends GetxController {
   final respon = ProductDetailRepository(dio);
   final product = Rx<Product?>(null);
-  final name = ''.obs;
-  final price = ''.obs;
-  final quantity = ''.obs;
-  final cover = ''.obs;
+  final name = TextEditingController();
+  final price = TextEditingController();
+  final quantity = TextEditingController();
+  final cover = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  final imageService = ImagePickerService();
+  final isUploading = false.obs;
+  final imageUrl = ''.obs;
   @override
   void onInit() {
     super.onInit();
     final id = Get.arguments as int;
+
     fetchDetailProduct(id);
   }
 
   Future<void> fetchDetailProduct(id) async {
     final result = await respon.getProductDetail(id);
     product.value = result;
+    name.text = result.name;
+    price.text = result.price.toString();
+    quantity.text = result.quantity.toString();
+    cover.text = result.cover;
   }
 
   Future<bool> deleteProduct(id) async {
@@ -42,14 +54,36 @@ class DetailProductController extends GetxController {
     }
   }
 
-  Future<void> upDateProduct(id) async {
+  Future<void> upDateProduct(
+    id, {
+    required name,
+    required int price,
+    required int quantity,
+    required cover,
+  }) async {
     final result = await respon.putProductUpdate(
       id,
       name: name.value,
-      price: int.parse(price.value),
-      quantity: int.parse(quantity.value),
+      price: price,
+      quantity: quantity,
       cover: cover.value,
     );
     product.value = result;
+  }
+
+  Future<void> pickAndUploadImage() async {
+    try {
+      final image = await imageService.pickImage(ImageSource.gallery);
+      if (image == null) return;
+      final url = await imageService.uploadToCloudinary(image);
+      if (url != null) {
+        imageUrl.value = url;
+        cover.text = url;
+      } else {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/getx/controllers/detail_product_controller.dart';
+import 'package:getx_statemanagement/views/product/update_product.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -171,70 +172,91 @@ class FormProductInformation extends State<ProductInformation> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
-                );
-              },
-              child: Container(
-                height: 54,
-                decoration: BoxDecoration(color: Color(0xff29AA98)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset(
-                      IconsAssets.shopping_cart,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      'Thêm vào giỏ hàng',
-                      style: GoogleFonts.nunitoSans(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          _bottomCartShopping(),
           SizedBox(width: 3),
-          Expanded(
-            child: _bottomNatigator(
-              onTap: () async {
-                if (product != null) {
-                  final result = await showDialogProductDelete();
-                  if (result == true) {
-                    final resultDelete = await controller.deleteProduct(
-                      product.id,
-                    );
-                    if (resultDelete == true) {
-                      await Future.delayed(Duration(milliseconds: 100));
-                      Get.back(result: 'deleted');
-                    }
-                  }
-                }
-              },
-              icon: Icons.clear_outlined,
-              textButton: 'Delete',
-            ),
-          ),
+          _bottomDelete(product),
           SizedBox(width: 3),
-          Expanded(
-            child: _bottomNatigator(
-              onTap: () async {},
-              icon: Icons.shopping_cart,
-              textButton: 'Update',
-            ),
-          ),
+          _bottomUpDate(product),
         ],
       ),
     );
   }
 
-  Widget _bottomNatigator({
+  Widget _bottomCartShopping() {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Đã thêm vào giỏ hàng!')));
+        },
+        child: Container(
+          height: 54,
+          decoration: BoxDecoration(color: Color(0xff29AA98)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(IconsAssets.shopping_cart, color: Colors.white),
+              Text(
+                'Thêm vào giỏ hàng',
+                style: GoogleFonts.nunitoSans(
+                  fontSize: 12,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _bottomDelete(Product? product) {
+    return Expanded(
+      child: _customBottom(
+        onTap: () async {
+          if (product != null) {
+            final result = await showDialogProductDelete();
+            if (result == true) {
+              final resultDelete = await controller.deleteProduct(product.id);
+              if (resultDelete == true) {
+                await Future.delayed(Duration(milliseconds: 100));
+                Navigator.pop(context, 'deleted');
+              }
+            }
+          }
+        },
+        icon: Icons.clear_outlined,
+        textButton: 'Delete',
+      ),
+    );
+  }
+
+  Widget _bottomUpDate(Product? product) {
+    return Expanded(
+      child: _customBottom(
+        onTap: () async {
+          if (product != null) {
+            final result = await Get.bottomSheet(
+              ShowPopUp.bottomSheet(context, controller),
+              isScrollControlled: true,
+            );
+            controller.upDateProduct(
+              product.id,
+              name: result['name'],
+              price: int.parse(result['price']),
+              quantity: int.parse(result['quantity']),
+              cover: result['cover'],
+            );
+          }
+        },
+        icon: Icons.shopping_cart,
+        textButton: 'Update',
+      ),
+    );
+  }
+
+  Widget _customBottom({
     required IconData icon,
     required String textButton,
     required VoidCallback onTap,
