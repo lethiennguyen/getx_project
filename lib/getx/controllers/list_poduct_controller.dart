@@ -15,7 +15,6 @@ class ListProductController extends GetxController {
   final listProdcut = ProductRepository(dio);
   final scroll = ScrollController();
   var products = <Product>[].obs;
-
   @override
   void onInit() {
     super.onInit();

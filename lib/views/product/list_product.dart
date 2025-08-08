@@ -107,7 +107,7 @@ class ProductListScreen extends State<ProductList> {
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (context, index) =>
-                    ProductItem(products: controller.products[index]),
+                    ProductItem(product: controller.products[index]),
                 childCount: controller.products.length,
               ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -136,14 +136,17 @@ class ProductListScreen extends State<ProductList> {
     );
   }
 
-  Widget ProductItem({required Product products}) {
+  Widget ProductItem({required Product product}) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
+      onTap: () async {
+        final result = await Get.toNamed(
           '/thongtinsanpham',
-          arguments: products.id,
+          arguments: product.id,
         );
+        print('>>> Kết quả trả về: $result');
+        if (result != null || result == 'deleted') {
+          controller.refreshPage();
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -170,7 +173,7 @@ class ProductListScreen extends State<ProductList> {
                     border: Border.all(color: Color(0xff232323), width: 0.5),
                   ),
                   child: Image.network(
-                    products.cover,
+                    product.cover,
                     fit: BoxFit.cover,
                     height: 180,
                   ),
@@ -185,7 +188,7 @@ class ProductListScreen extends State<ProductList> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      products.name,
+                      product.name,
                       style: GoogleFonts.nunitoSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -202,7 +205,7 @@ class ProductListScreen extends State<ProductList> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${currencyFormatter.format(products.price)} VNĐ',
+                            '${currencyFormatter.format(product.price)} VNĐ',
                             style: GoogleFonts.nunitoSans(
                               fontSize: 15,
                               fontWeight: FontWeight.w900,

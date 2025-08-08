@@ -1,0 +1,282 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:getx_statemanagement/getx/controllers/detail_product_controller.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+
+import '../../base/asset/base_asset.dart';
+import '../../data/model/product.dart';
+import '../common/app_colors.dart';
+import '../common/dialog.dart';
+
+class ProductInformation extends StatefulWidget {
+  const ProductInformation({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return FormProductInformation();
+  }
+}
+
+class FormProductInformation extends State<ProductInformation> {
+  final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
+  final controller = Get.put(DetailProductController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar(),
+      body: Obx(() {
+        final product = controller.product.value;
+        if (product == null) {
+          return Center(child: CircularProgressIndicator());
+        }
+        return _bodyformProduct(product: product);
+      }),
+      bottomNavigationBar: Obx(
+        () => bottomNavigationBar(product: controller.product.value),
+      ),
+    );
+  }
+
+  PreferredSizeWidget appBar() {
+    return AppBar(
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back),
+      ),
+      backgroundColor: Colors.white,
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(1),
+        child: Container(color: boderAppbar, height: 1),
+      ),
+      elevation: 0,
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/shopping_cart');
+          },
+          icon: SvgPicture.asset(IconsAssets.shopping_cart),
+          tooltip: 'Giỏ hàng',
+        ),
+        SizedBox(width: 8),
+      ],
+    );
+  }
+
+  Widget _bodyformProduct({required Product product}) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: boderAppbar, width: 5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Color(0xffF3F3F3), width: 1),
+            ),
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+              child: Image.network(product.cover, fit: BoxFit.contain),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 16),
+            child: Text(
+              '${currencyFormatter.format(product.price)} đ',
+              style: GoogleFonts.roboto(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: informationCart,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 6, top: 16),
+            child: Text(
+              product.name,
+              style: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 6,
+              top: 16,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Số lượng :',
+                      style: GoogleFonts.roboto(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${product.quantity}',
+                      style: GoogleFonts.roboto(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: textGray,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SvgPicture.asset(IconsAssets.start),
+                    Text(
+                      ' 5/5',
+                      style: GoogleFonts.roboto(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget bottomNavigationBar({required Product? product}) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(2, 16, 2, 21),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: Color(0xffE0E0E0), width: 1)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
+                );
+              },
+              child: Container(
+                height: 54,
+                decoration: BoxDecoration(color: Color(0xff29AA98)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      IconsAssets.shopping_cart,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Thêm vào giỏ hàng',
+                      style: GoogleFonts.nunitoSans(
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 3),
+          Expanded(
+            child: _bottomNatigator(
+              onTap: () async {
+                if (product != null) {
+                  final result = await showDialogProductDelete();
+                  if (result == true) {
+                    final resultDelete = await controller.deleteProduct(
+                      product.id,
+                    );
+                    if (resultDelete == true) {
+                      await Future.delayed(Duration(milliseconds: 100));
+                      Get.back(result: 'deleted');
+                    }
+                  }
+                }
+              },
+              icon: Icons.clear_outlined,
+              textButton: 'Delete',
+            ),
+          ),
+          SizedBox(width: 3),
+          Expanded(
+            child: _bottomNatigator(
+              onTap: () async {},
+              icon: Icons.shopping_cart,
+              textButton: 'Update',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomNatigator({
+    required IconData icon,
+    required String textButton,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 108,
+        height: 54,
+        decoration: BoxDecoration(color: informationCart),
+        // onPressed: () {},
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(
+              textButton,
+              style: GoogleFonts.nunitoSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool?> showDialogProductDelete() async {
+    return await Get.dialog<bool>(
+      CustomAlertDialogDeleteProduct(
+        title: 'Thông báo',
+        message: 'Bạn có chắc chắn xóa sản phẩm',
+        onConfirm: () {
+          Get.back(result: true);
+        },
+        onCancel: () {
+          Get.back(result: false);
+        },
+      ),
+    );
+  }
+}
