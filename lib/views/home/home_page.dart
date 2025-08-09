@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:getx_statemanagement/views/home/home.dart';
-import 'package:getx_statemanagement/views/product/list_product.dart';
+import 'package:getx_statemanagement/views/product/list_product_view.dart';
 
 import '../common/app_colors.dart';
 
@@ -15,7 +16,7 @@ class _LogoutPageState extends State<LogoutPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    ProductList(),
+    ProductList(), // màn load san phâm
     LogoutScreen(),
     LogoutScreen(),
     LogoutScreen(),
@@ -59,9 +60,10 @@ class _LogoutPageState extends State<LogoutPage> {
           ),
         ),
         Positioned(
+          // nút sang màn thêm san phâm
           top: 10,
           child: GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/add_product'),
+            onTap: () => {Get.toNamed('/add_product')},
             child: Container(
               width: 55,
               height: 55,
