@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/getx/controllers/detail_product_controller.dart';
-import 'package:getx_statemanagement/views/product/update_product.dart';
+import 'package:getx_statemanagement/views/product/update_product_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -236,18 +236,20 @@ class FormProductInformation extends State<ProductInformation> {
     return Expanded(
       child: _customBottom(
         onTap: () async {
-          if (product != null) {
+          if (controller.product != null) {
             final result = await Get.bottomSheet(
               ShowPopUp.bottomSheet(context, controller),
               isScrollControlled: true,
             );
+
             controller.upDateProduct(
-              product.id,
+              controller.product.value?.id,
               name: result['name'],
               price: int.parse(result['price']),
               quantity: int.parse(result['quantity']),
               cover: result['cover'],
             );
+            Get.delete<DetailProductController>();
           }
         },
         icon: Icons.shopping_cart,

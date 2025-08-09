@@ -24,29 +24,31 @@ class ProductListScreen extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: SvgPicture.asset(Pictures.logo, width: 158, height: 37),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/shopping_cart');
-              },
-              icon: SvgPicture.asset(IconsAssets.shopping_cart),
-              tooltip: 'Giỏ hàng',
-            ),
-            SizedBox(width: 8),
-          ],
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(1),
-            child: Container(color: Color(0xfffffffe), height: 1),
-          ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: appBar(),
+      body: Obx(() => _formProductList(controller.products)),
+    );
+  }
+
+  PreferredSizeWidget appBar() {
+    return AppBar(
+      title: SvgPicture.asset(Pictures.logo, width: 158, height: 37),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/shopping_cart');
+          },
+          icon: SvgPicture.asset(IconsAssets.shopping_cart),
+          tooltip: 'Giỏ hàng',
         ),
-        body: _formProductList(controller.products),
+        SizedBox(width: 8),
+      ],
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(1),
+        child: Container(color: Color(0xfffffffe), height: 1),
       ),
     );
   }
@@ -143,7 +145,6 @@ class ProductListScreen extends State<ProductList> {
           '/thongtinsanpham',
           arguments: product.id,
         );
-        print('>>> Kết quả trả về: $result');
         if (result != null || result == 'deleted') {
           controller.refreshPage();
         }
@@ -168,15 +169,10 @@ class ProductListScreen extends State<ProductList> {
               padding: const EdgeInsets.all(8),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xff232323), width: 0.5),
-                  ),
-                  child: Image.network(
-                    product.cover,
-                    fit: BoxFit.cover,
-                    height: 180,
-                  ),
+                child: Image.network(
+                  product.cover,
+                  fit: BoxFit.cover,
+                  height: 150,
                 ),
               ),
             ),
@@ -207,7 +203,7 @@ class ProductListScreen extends State<ProductList> {
                           Text(
                             '${currencyFormatter.format(product.price)} VNĐ',
                             style: GoogleFonts.nunitoSans(
-                              fontSize: 15,
+                              fontSize: 13,
                               fontWeight: FontWeight.w900,
                               color: Colors.black,
                             ),

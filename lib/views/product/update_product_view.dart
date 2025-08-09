@@ -27,17 +27,22 @@ class ShowPopUp {
   }
 
   static Widget _imagePicker(DetailProductController controller) {
-    return ImagePickerWidget(
-      label: 'Ảnh sản phẩm',
-      width: 200,
-      height: 200,
-      imageUrl: controller.cover.text,
-      isLoading: controller.isUploading.value,
-      progress: 0,
-      onTap: () {
-        controller.pickAndUploadImage();
-      },
-      placeholder: const Icon(Icons.person, size: 60),
+    return Obx(
+      () => ImagePickerWidget(
+        label: 'Ảnh sản phẩm',
+        width: 200,
+        height: 200,
+        imageUrl:
+            controller.imageUrl.value.isNotEmpty
+                ? controller.imageUrl.value
+                : controller.cover.text,
+        isLoading: controller.isUploading.value,
+        progress: 0,
+        onTap: () {
+          controller.pickAndUploadImage();
+        },
+        placeholder: const Icon(Icons.person, size: 60),
+      ),
     );
   }
 
@@ -74,13 +79,12 @@ class ShowPopUp {
           const SizedBox(height: 80),
           ElevatedButton(
             onPressed: () {
-              final imageUrl = controller.pickAndUploadImage();
               Get.back(
                 result: {
                   'name': controller.name.text,
                   'price': controller.price.text,
                   'quantity': controller.quantity.text,
-                  'cover': imageUrl,
+                  'cover': controller.cover.text ?? controller.imageUrl,
                 },
               );
             },

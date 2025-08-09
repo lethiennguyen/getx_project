@@ -12,9 +12,11 @@ class ListProductController extends GetxController {
   final page = 1.obs;
   final size = 10.obs;
 
-  final listProdcut = ProductRepository(dio);
+  final listProduct = ProductRepository(dio);
+
   final scroll = ScrollController();
   var products = <Product>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -36,7 +38,7 @@ class ListProductController extends GetxController {
     try {
       isLoading.value = true;
       final request = ProductListRequest(page: page.value, size: size.value);
-      final result = await listProdcut.getProductList(request);
+      final result = await listProduct.getProductList(request);
       products.value = result;
     } on Exception catch (e) {
       print('Lỗi refresh: $e');
@@ -48,7 +50,7 @@ class ListProductController extends GetxController {
       isPullToRefresh.value = true;
       page.value = 1;
       final request = ProductListRequest(page: page.value, size: size.value);
-      final result = await listProdcut.getProductList(request);
+      final result = await listProduct.getProductList(request);
       products.value = result;
     } catch (e) {
       print('Lỗi refresh: $e');
@@ -63,7 +65,7 @@ class ListProductController extends GetxController {
       isLoadingMore.value = true;
       ++page.value;
       final request = ProductListRequest(page: page.value, size: size.value);
-      final result = await listProdcut.getProductList(request);
+      final result = await listProduct.getProductList(request);
       products.addAll(result);
     } catch (e) {
       print('Lỗi loadMore: $e');

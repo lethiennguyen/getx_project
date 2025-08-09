@@ -6,7 +6,8 @@ import 'package:getx_statemanagement/data/core/api_client.dart';
 import 'package:getx_statemanagement/data/repositories/users_repositories.dart';
 import 'package:getx_statemanagement/views/home/home_page.dart';
 import 'package:getx_statemanagement/views/login/login.dart';
-import 'package:getx_statemanagement/views/product/detail_product.dart';
+import 'package:getx_statemanagement/views/product/create_product_view.dart';
+import 'package:getx_statemanagement/views/product/detail_product_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page: () => MyHomeLogin()),
         GetPage(name: '/home', page: () => LogoutPage()),
         GetPage(name: '/thongtinsanpham', page: () => ProductInformation()),
+        GetPage(name: '/add_product', page: () => CreateProduct()),
       ],
       initialRoute: initialRoute,
     );

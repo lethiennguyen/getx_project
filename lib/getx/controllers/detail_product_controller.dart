@@ -63,25 +63,25 @@ class DetailProductController extends GetxController {
   }) async {
     final result = await respon.putProductUpdate(
       id,
-      name: name.value,
+      name: name,
       price: price,
       quantity: quantity,
-      cover: cover.value,
+      cover: cover,
     );
     product.value = result;
   }
 
-  Future<void> pickAndUploadImage() async {
+  Future<String?> pickAndUploadImage() async {
     try {
       final image = await imageService.pickImage(ImageSource.gallery);
-      if (image == null) return;
+      if (image == null) return null;
       final url = await imageService.uploadToCloudinary(image);
-      if (url != null) {
+      print("url : $url");
+      if (url != null && url.isNotEmpty) {
         imageUrl.value = url;
         cover.text = url;
-      } else {
-        return;
       }
+      return url;
     } catch (e) {
       rethrow;
     }
