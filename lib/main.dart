@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:getx_statemanagement/constans/hive_constants.dart';
-import 'package:getx_statemanagement/data/core/api_client.dart';
-import 'package:getx_statemanagement/data/repositories/users_repositories.dart';
 import 'package:getx_statemanagement/views/home/home_page.dart';
 import 'package:getx_statemanagement/views/login/login.dart';
 import 'package:getx_statemanagement/views/product/create_product_view.dart';
 import 'package:getx_statemanagement/views/product/detail_product_view.dart';
+import 'package:getx_statemanagement/views/shopping_cart/shopping_cart_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
+
+import 'constans/hive_constants.dart';
+import 'constans/shopping_cart/hive_shopping_cart.dart';
+import 'getx/controllers/app_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
+  Hive.registerAdapter(CartItemAdapter());
   await Hive.openBox(HiveBoxNames.auth);
-  final box = Hive.box(HiveBoxNames.auth);
-  final bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
-  final authRepo = AuthRepository(dio);
-  await dotenv.load(fileName: '.env');
-  runApp(MyApp(authRepo, initialRoute: isLoggedIn ? '/home' : '/login'));
+  await Hive.openBox<CartItem>(HiveBoxNames.cartbox);
+  final appController = Get.put<AppController>(
+    AppController(),
+    permanent: true,
+  );
+
+  runApp(MyApp(appController: appController));
 }
 
 class MyApp extends StatelessWidget {
-  final String initialRoute;
-  const MyApp(AuthRepository authRepo, {super.key, required this.initialRoute});
+  final AppController appController;
+  const MyApp({super.key, required this.appController});
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +55,9 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/home', page: () => LogoutPage()),
         GetPage(name: '/thongtinsanpham', page: () => ProductInformation()),
         GetPage(name: '/add_product', page: () => CreateProduct()),
+        GetPage(name: '/shopping_cart', page: () => ShoppingCart()),
       ],
-      initialRoute: initialRoute,
+      initialRoute: appController.isLoggedIn.value ? '/home' : '/login',
     );
   }
 }

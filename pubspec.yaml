@@ -32,7 +32,6 @@ dependencies:
     sdk: flutter
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.7
-  flutter_bloc: ^8.1.0
   dio: ^5.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -47,6 +46,7 @@ dependencies:
   fly_to_cart: ^1.0.1 #animation
   lottie: ^3.3.1
   get: 4.7.2
+  shimmer: ^3.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

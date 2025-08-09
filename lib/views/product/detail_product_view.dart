@@ -221,7 +221,8 @@ class FormProductInformation extends State<ProductInformation> {
               final resultDelete = await controller.deleteProduct(product.id);
               if (resultDelete == true) {
                 await Future.delayed(Duration(milliseconds: 100));
-                Navigator.pop(context, 'deleted');
+                // Navigator.pop(context, 'deleted');
+                Get.back(result: 'deleted');
               }
             }
           }

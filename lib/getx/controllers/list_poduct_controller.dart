@@ -4,6 +4,10 @@ import 'package:getx_statemanagement/data/dio/dio.dart';
 import 'package:getx_statemanagement/data/model/product.dart';
 import 'package:getx_statemanagement/data/repositories/product_reponsitories.dart';
 import 'package:getx_statemanagement/data/request/product_request.dart';
+import 'package:hive/hive.dart';
+
+import '../../constans/hive_constants.dart';
+import '../../constans/shopping_cart/hive_shopping_cart.dart';
 
 class ListProductController extends GetxController {
   var isLoading = true.obs;
@@ -17,10 +21,14 @@ class ListProductController extends GetxController {
   final scroll = ScrollController();
   var products = <Product>[].obs;
 
+  late final Box<CartItem> _box;
+
+  final RxList<CartItem> items = <CartItem>[].obs;
   @override
   void onInit() {
     super.onInit();
     loadFistPage();
+    _box = Hive.box<CartItem>(HiveBoxNames.cartbox);
     scroll.addListener(() {
       if (scroll.position.pixels >= scroll.position.maxScrollExtent - 100) {
         loadMorePage();
@@ -32,6 +40,11 @@ class ListProductController extends GetxController {
   void dispose() {
     scroll.dispose();
     super.dispose();
+  }
+
+  Future<void> addItem(CartItem item) async {
+    await _box.add(item);
+    items.add(item);
   }
 
   Future<void> loadFistPage() async {

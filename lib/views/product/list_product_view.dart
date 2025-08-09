@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:getx_statemanagement/constans/shopping_cart/hive_shopping_cart.dart';
 import 'package:getx_statemanagement/getx/controllers/list_poduct_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../base/asset/base_asset.dart';
 import '../../data/model/product.dart';
 import '../../enums/product_type.dart';
+import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
 
 class ProductList extends StatefulWidget {
@@ -21,7 +23,7 @@ class ProductListScreen extends State<ProductList> {
   Category _category = Category.all;
   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
   final controller = Get.put(ListProductController());
-
+  final cart = Get.put(CartController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +41,7 @@ class ProductListScreen extends State<ProductList> {
       actions: [
         IconButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/shopping_cart');
+            Get.toNamed('/shopping_cart');
           },
           icon: SvgPicture.asset(IconsAssets.shopping_cart),
           tooltip: 'Giỏ hàng',
@@ -60,37 +62,9 @@ class ProductListScreen extends State<ProductList> {
         controller: controller.scroll,
         slivers: [
           SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 30,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: Category.values.length,
-                itemBuilder: (context, index) {
-                  final category = Category.values[index];
-                  final selected = category == _category;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: ElevatedButton(
-                      onPressed: () => setState(() => _category = category),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(40, 20),
-                        backgroundColor: selected ? kBrandOrange : Colors.white,
-                        foregroundColor: selected ? Colors.white : Colors.black,
-                        side: BorderSide(
-                          color: selected ? kBrandOrange : Colors.black,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: Text(category.label),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+
+          SliverToBoxAdapter(child: typeProduct()),
+
           if (controller.isPullToRefresh.value)
             SliverToBoxAdapter(
               child: Padding(
@@ -104,6 +78,7 @@ class ProductListScreen extends State<ProductList> {
                 ),
               ),
             ),
+
           SliverPadding(
             padding: const EdgeInsets.all(8),
             sliver: SliverGrid(
@@ -120,6 +95,7 @@ class ProductListScreen extends State<ProductList> {
               ),
             ),
           ),
+
           if (controller.isLoadingMore.value)
             SliverToBoxAdapter(
               child: Padding(
@@ -138,105 +114,153 @@ class ProductListScreen extends State<ProductList> {
     );
   }
 
+  Widget typeProduct() {
+    return SizedBox(
+      height: 30,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: Category.values.length,
+        itemBuilder: (context, index) {
+          final category = Category.values[index];
+          final selected = category == _category;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: ElevatedButton(
+              onPressed: () => setState(() => _category = category),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(40, 20),
+                backgroundColor: selected ? kBrandOrange : Colors.white,
+                foregroundColor: selected ? Colors.white : Colors.black,
+                side: BorderSide(color: selected ? kBrandOrange : Colors.black),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Text(category.label),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget ProductItem({required Product product}) {
-    return GestureDetector(
-      onTap: () async {
-        final result = await Get.toNamed(
-          '/thongtinsanpham',
-          arguments: product.id,
-        );
-        if (result != null || result == 'deleted') {
-          controller.refreshPage();
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: textGray),
-          borderRadius: BorderRadius.circular(17),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.network(
-                  product.cover,
-                  fit: BoxFit.cover,
-                  height: 150,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: GestureDetector(
+        onTap: () async {
+          final result = await Get.toNamed(
+            '/thongtinsanpham',
+            arguments: product.id,
+          );
+          if (result != null || result == 'deleted') {
+            controller.refreshPage();
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: textGray),
+            borderRadius: BorderRadius.circular(17),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    product.cover,
+                    fit: BoxFit.cover,
+                    height: 150,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      product.name,
-                      style: GoogleFonts.nunitoSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        product.name,
+                        style: GoogleFonts.nunitoSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 16,
-                        top: 8,
-                        right: 8,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${currencyFormatter.format(product.price)} VNĐ',
-                            style: GoogleFonts.nunitoSans(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 16,
+                          top: 8,
+                          right: 8,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${currencyFormatter.format(product.price)} VNĐ',
+                              style: GoogleFonts.nunitoSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Đã thêm vào giỏ hàng!'),
+                            GestureDetector(
+                              onTap: () {
+                                final id = product.id;
+                                if (id != null) {
+                                  final item = CartItem(
+                                    id: id,
+                                    name: product.name,
+                                    price: product.price,
+                                    quantity: 1,
+                                    cover: product.cover,
+                                  );
+                                  cart.addItem(item);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Đã thêm vào giỏ hàng!'),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: kBrandOrange,
+                                  shape: BoxShape.circle,
                                 ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: kBrandOrange,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                size: 20,
-                                color: Colors.white,
+                                child: Icon(
+                                  Icons.add,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
