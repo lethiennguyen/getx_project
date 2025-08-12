@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/shopping_cart/hive_shopping_cart.dart';
 import 'package:getx_statemanagement/getx/controllers/list_poduct_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-
 import '../../base/asset/base_asset.dart';
 import '../../data/model/product.dart';
 import '../../enums/product_type.dart';
@@ -13,6 +11,8 @@ import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
 
 class ProductList extends StatefulWidget {
+  const ProductList({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return ProductListScreen();
@@ -21,9 +21,8 @@ class ProductList extends StatefulWidget {
 
 class ProductListScreen extends State<ProductList> {
   Category _category = Category.all;
-  final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
   final controller = Get.put(ListProductController());
-  final cart = Get.put(CartController());
+  final cart = Get.find<CartController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,9 +167,9 @@ class ProductListScreen extends State<ProductList> {
             borderRadius: BorderRadius.circular(17),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                blurRadius: 4,
+                color: Colors.grey,
                 offset: Offset(0, 2),
+                blurRadius: 4,
               ),
             ],
           ),
@@ -184,7 +183,7 @@ class ProductListScreen extends State<ProductList> {
                   child: Image.network(
                     product.cover,
                     fit: BoxFit.cover,
-                    height: 150,
+                    height: 160,
                   ),
                 ),
               ),
@@ -213,7 +212,7 @@ class ProductListScreen extends State<ProductList> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${currencyFormatter.format(product.price)} VNĐ',
+                              '${controller.formatPrice(product.price)}',
                               style: GoogleFonts.nunitoSans(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w900,

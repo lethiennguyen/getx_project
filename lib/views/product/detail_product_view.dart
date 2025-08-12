@@ -7,7 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../base/asset/base_asset.dart';
+import '../../constans/shopping_cart/hive_shopping_cart.dart';
 import '../../data/model/product.dart';
+import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
 import '../common/dialog.dart';
 
@@ -23,7 +25,7 @@ class ProductInformation extends StatefulWidget {
 class FormProductInformation extends State<ProductInformation> {
   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
   final controller = Get.put(DetailProductController());
-
+  final cart = Get.find<CartController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +174,7 @@ class FormProductInformation extends State<ProductInformation> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _bottomCartShopping(),
+          _bottomCartShopping(product),
           SizedBox(width: 3),
           _bottomDelete(product),
           SizedBox(width: 3),
@@ -182,13 +184,26 @@ class FormProductInformation extends State<ProductInformation> {
     );
   }
 
-  Widget _bottomCartShopping() {
+  Widget _bottomCartShopping(Product? product) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Đã thêm vào giỏ hàng!')));
+          if (product != null) {
+            final id = product.id;
+            if (id != null) {
+              final item = CartItem(
+                id: id,
+                name: product.name,
+                price: product.price,
+                quantity: 1,
+                cover: product.cover,
+              );
+              cart.addItem(item);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Đã thêm vào giỏ hàng!')));
+            }
+          }
         },
         child: Container(
           height: 54,

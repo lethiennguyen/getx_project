@@ -11,6 +11,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'constans/hive_constants.dart';
 import 'constans/shopping_cart/hive_shopping_cart.dart';
 import 'getx/controllers/app_controller.dart';
+import 'getx/controllers/shopping_cart_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,6 +59,9 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/shopping_cart', page: () => ShoppingCart()),
       ],
       initialRoute: appController.isLoggedIn.value ? '/home' : '/login',
+      initialBinding: BindingsBuilder(() {
+        Get.put<CartController>(CartController(), permanent: true);
+      }),
     );
   }
 }

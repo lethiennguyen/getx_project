@@ -11,6 +11,7 @@ import '../common/input_field.dart';
 
 class CreateProduct extends StatelessWidget {
   final controller = Get.put(CreateProductController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
