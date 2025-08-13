@@ -14,8 +14,16 @@ class DetailProductController extends GetxController {
   final price = TextEditingController();
   final quantity = TextEditingController();
   final cover = TextEditingController();
+
+  final FocusNode nameFocus = FocusNode();
+  final FocusNode priceFocus = FocusNode();
+  final FocusNode quantityFocus = FocusNode();
+
   final formKey = GlobalKey<FormState>();
   final imageService = ImagePickerService();
+
+  final autovalidateMode = AutovalidateMode.disabled.obs;
+  final isSubmitting = false.obs;
   final isUploading = false.obs;
   final imageUrl = ''.obs;
   @override
@@ -54,22 +62,43 @@ class DetailProductController extends GetxController {
     }
   }
 
-  Future<void> upDateProduct(
-    id, {
-    required name,
-    required int price,
-    required int quantity,
-    required cover,
-  }) async {
-    final result = await respon.putProductUpdate(
-      id,
-      name: name,
-      price: price,
-      quantity: quantity,
-      cover: cover,
-    );
-    product.value = result;
+  Future<bool> upDateProduct(
+      id, {
+        required  name,
+        required int price,
+        required int quantity,
+        required cover,
+      }) async {
+    autovalidateMode.value = AutovalidateMode.always;
+
+    final isValid  = formKey.currentState?.validate() ?? false;
+    final hasCover = cover.value.isNotEmpty;
+    if (!isValid || !hasCover) {
+      if (!hasCover) {
+        Get.snackbar('Lỗi', 'Vui lòng chọn ảnh sản phẩm', snackPosition: SnackPosition.TOP);
+      }
+      return false;
+    }
+
+    isSubmitting.value = true;
+    try {
+      final result = await respon.putProductUpdate(
+        id,
+        name: name.text.trim(),
+        price: price,
+        quantity: quantity,
+        cover: cover.value,
+      );
+      product.value = result;
+      return result != null;
+    } catch (e) {
+      Get.snackbar('Lỗi', 'Không thể lưu. Vui lòng thử lại.', snackPosition: SnackPosition.TOP);
+      return false;
+    } finally {
+      isSubmitting.value = false;
+    }
   }
+
 
   Future<String?> pickAndUploadImage() async {
     try {

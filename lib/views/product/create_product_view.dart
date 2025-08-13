@@ -26,82 +26,92 @@ class CreateProduct extends StatelessWidget {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Obx(
-              () => ImagePickerWidget(
-                label: 'Ảnh sản phẩm',
-                width: 200,
-                height: 200,
-                imageUrl: controller.cover.value,
-                isLoading: controller.isUploading.value,
-                onTap: controller.pickAndUploadImage,
-                placeholder: const Icon(Icons.person, size: 60),
-              ),
-            ),
+        child: Form(
+            key: controller.formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              children: [
+                Obx(
+                  () => ImagePickerWidget(
+                    label: ProductField.cover.lable,
+                    width: 200,
+                    height: 200,
+                    imageUrl: controller.cover.value,
+                    isLoading: controller.isUploading.value,
+                    onTap: controller.pickAndUploadImage,
+                    placeholder: const Icon(Icons.person, size: 60),
+                  ),
+                ),
 
-            ModernInputField(
-              label: ProductField.name.lable,
-              hintText: ProductField.name.hint,
-              controller: controller.name,
-              focusNode: FocusNode(),
+                ModernInputField(
+                  label: ProductField.name.lable,
+                  hintText: ProductField.name.hint,
+                  controller: controller.name,
+                  focusNode: controller.nameFocus,
+                  validator: ProductField.name.validate,
+                  keyboardType: TextInputType.text,
+                ),
+                ModernInputField(
+                  label: ProductField.price.lable,
+                  hintText: ProductField.price.hint,
+                  controller: controller.price,
+                  focusNode: controller.priceFocus,
+                  keyboardType: TextInputType.number,
+                  validator: ProductField.price.validate,
+                ),
+                ModernInputField(
+                  label: ProductField.quantity.lable,
+                  hintText: ProductField.quantity.hint,
+                  controller: controller.quantity,
+                  focusNode: controller.quantityFocus,
+                  keyboardType: TextInputType.number,
+                  validator:ProductField.quantity.validate,
+                ),
+              ],
             ),
-            ModernInputField(
-              label: ProductField.price.lable,
-              hintText: ProductField.price.hint,
-              controller: controller.price,
-              focusNode: FocusNode(),
-            ),
-            ModernInputField(
-              label: ProductField.quantity.lable,
-              hintText: ProductField.quantity.hint,
-              controller: controller.quantity,
-              focusNode: FocusNode(),
-            ),
-          ],
+          ),
         ),
-      ),
     );
   }
 
   Widget bottomNavigator(Product? product) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: () async {
-          if (controller.product != null) {
-            final cuccess = await controller.createProduct(
-              name: controller.name,
-              price: int.parse(controller.price.text),
-              quantity: int.parse(controller.price.text),
-              cover: controller.cover,
-            );
-            if (cuccess) {
-              Get.offAllNamed('/home');
-            } else {
-              Get.snackbar(
-                'Thất bại',
-                'Không thể tạo sản phẩm',
-                snackPosition: SnackPosition.BOTTOM,
+      child:  ElevatedButton(
+          onPressed: () async {
+            if (controller.product != null) {
+              final cuccess = await controller.createProduct(
+                name: controller.name,
+                priceCtrl:controller.price,
+                quantityCtrl: controller.price,
+                cover: controller.cover,
               );
+              if (cuccess) {
+                Get.offAllNamed('/home');
+              } else {
+                Get.snackbar(
+                  'Thất bại',
+                  'Không thể tạo sản phẩm',
+                  snackPosition: SnackPosition.TOP,
+                );
+              }
             }
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: kBrandOrange,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: kBrandOrange,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            'Thêm sản phẩm',
+            style: GoogleFonts.roboto(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
           ),
         ),
-        child: Text(
-          'Thêm sản phẩm',
-          style: GoogleFonts.roboto(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
-        ),
-      ),
     );
   }
 }

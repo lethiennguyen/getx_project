@@ -48,7 +48,7 @@ class FormProductInformation extends State<ProductInformation> {
     return AppBar(
       leading: IconButton(
         onPressed: () {
-          Navigator.pop(context);
+          Get.offAllNamed('/home');
         },
         icon: Icon(Icons.arrow_back),
       ),
@@ -236,8 +236,7 @@ class FormProductInformation extends State<ProductInformation> {
               final resultDelete = await controller.deleteProduct(product.id);
               if (resultDelete == true) {
                 await Future.delayed(Duration(milliseconds: 100));
-                // Navigator.pop(context, 'deleted');
-                Get.back(result: 'deleted');
+                Get.offAllNamed('/home');
               }
             }
           }

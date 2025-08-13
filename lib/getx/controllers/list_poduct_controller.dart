@@ -5,6 +5,7 @@ import 'package:getx_statemanagement/data/model/product.dart';
 import 'package:getx_statemanagement/data/repositories/product_reponsitories.dart';
 import 'package:getx_statemanagement/data/request/product_request.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 
 import '../../constans/hive_constants.dart';
 import '../../constans/shopping_cart/hive_shopping_cart.dart';
@@ -24,6 +25,9 @@ class ListProductController extends GetxController {
   late final Box<CartItem> _box;
 
   final RxList<CartItem> items = <CartItem>[].obs;
+
+  final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
+
   @override
   void onInit() {
     super.onInit();
@@ -85,5 +89,15 @@ class ListProductController extends GetxController {
     } finally {
       isLoadingMore.value = false;
     }
+  }
+  String formatPrice(num price) {
+    String formatted = currencyFormatter.format(price);
+
+    String onlyDigits = formatted.replaceAll(RegExp(r'\D'), '');
+    if (onlyDigits.length > 9) {
+      return '${formatted.substring(0, 9)}... VNĐ';
+    }
+
+    return '$formatted VNĐ';
   }
 }

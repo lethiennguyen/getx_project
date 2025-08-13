@@ -9,6 +9,7 @@ class ModernInputField extends StatefulWidget {
   final FocusNode focusNode;
   final TextInputType keyboardType;
   final bool isPassword;
+  final FormFieldValidator<String>? validator;
 
   const ModernInputField({
     super.key,
@@ -18,6 +19,7 @@ class ModernInputField extends StatefulWidget {
     required this.focusNode,
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
+    this.validator,
   });
   @override
   State<ModernInputField> createState() => _ModernInputFieldState();
@@ -30,7 +32,6 @@ class _ModernInputFieldState extends State<ModernInputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
         Text(
           widget.label,
           style: GoogleFonts.nunitoSans(
@@ -45,6 +46,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           cursorColor: kBrandOrange,
+          validator: widget.validator,
           style: GoogleFonts.nunitoSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -65,9 +67,17 @@ class _ModernInputFieldState extends State<ModernInputField> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Color(0xffEBECED), width: 2),
             ),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: kBrandOrange2),
+              borderRadius: BorderRadius.circular(6),
+            ),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
       ],
     );
   }
