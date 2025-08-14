@@ -307,7 +307,6 @@ class FromShoppingCart extends State<ShoppingCart> {
             ),
           ),
 
-          // Total price section
           Expanded(
             flex: 3,
             child: Column(
