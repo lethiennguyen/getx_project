@@ -32,7 +32,8 @@ class FromShoppingCart extends State<ShoppingCart> {
     return AppBar(
       leading: IconButton(
         onPressed: () {
-          Navigator.pop(context);
+          Get.delete<CartController>();
+          Get.back();
         },
         icon: Icon(Icons.arrow_back_ios_new),
       ),
@@ -49,7 +50,7 @@ class FromShoppingCart extends State<ShoppingCart> {
         child: Container(color: Colors.black26, height: 0.5),
       ),
       actions: [
-        IconButton(onPressed: () {}, icon: Image.asset(IconsAssets.trash_can)),
+        IconButton(onPressed: () {cart.removeSelected();}, icon: Image.asset(IconsAssets.trash_can)),
         SizedBox(width: 8),
       ],
     );
@@ -57,7 +58,7 @@ class FromShoppingCart extends State<ShoppingCart> {
 
   Widget bodyShoppingCart() {
     return Obx(() {
-      final items = cart.items; // RxList<CartItem>
+      final items = cart.items;
       if (items.isEmpty) {
         return const Center(child: Text('Giỏ hàng trống'));
       }
@@ -71,12 +72,13 @@ class FromShoppingCart extends State<ShoppingCart> {
               productId: item.id,
               name: item.name,
               price: item.price,
-              quatily: item.quantity,
+              quantity: item.quantity,
               cover: item.cover,
               onDelete: () {
                 cart.removeAt(index);
               },
               context: context,
+              index: index
             ),
           );
         },
@@ -88,10 +90,11 @@ class FromShoppingCart extends State<ShoppingCart> {
     required int productId,
     required String name,
     required int price,
-    required int quatily,
+    required int quantity,
     required String cover,
     required VoidCallback? onDelete,
     required BuildContext context,
+    required int index,
   }) {
     return Slidable(
       key: Key(productId.toString()),
@@ -117,16 +120,16 @@ class FromShoppingCart extends State<ShoppingCart> {
         child: Row(
           children: [
             SizedBox(width: 10),
-            // Checkbox(
-            //   value: state.selectedIds.contains(productId),
-            //   onChanged: (v) {
-            //   },
-            //
-            //   activeColor: kBrandOrange,
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(4),
-            //   ),
-            // ),
+            Obx(
+              ()=> Checkbox(
+                value: cart.checked[index],
+                onChanged: (v) => cart.select(index,v ??false ),
+                activeColor: kBrandOrange,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
             Container(
               padding: EdgeInsets.all(6),
               decoration: BoxDecoration(
@@ -171,16 +174,15 @@ class FromShoppingCart extends State<ShoppingCart> {
                 ),
               ),
             ),
-            increaseOrDecreaseSalary(),
+            increaseOrDecreaseSalary(index,quantity),
+            SizedBox(width: 10),
           ],
         ),
       ),
     );
   }
 
-  // tăng giảm số lượng
-  Widget increaseOrDecreaseSalary() {
-    final int quantity = 1;
+  Widget increaseOrDecreaseSalary(int index, int quantity) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
@@ -210,7 +212,9 @@ class FromShoppingCart extends State<ShoppingCart> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      cart.quantityChange(index, false);
+                    },
                     child: Container(
                       width: 20,
                       height: 20,
@@ -234,18 +238,20 @@ class FromShoppingCart extends State<ShoppingCart> {
                       ),
                     ),
                     child: Center(
-                      child: Text(
-                        '$quantity',
-                        style: GoogleFonts.nunitoSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: textColorGray,
-                        ),
+                      child:  Text(
+                            '$quantity',
+                            style: GoogleFonts.nunitoSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: textColorGray,
+                            ),
                       ),
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      cart.quantityChange(index, true);
+                    },
                     child: Container(
                       width: 20,
                       height: 20,
@@ -283,17 +289,21 @@ class FromShoppingCart extends State<ShoppingCart> {
             flex: 2,
             child: Row(
               children: [
-                // Transform.scale(
-                //   scale: 1.2,
-                //   child: Checkbox(
-                //     value:(){},
-                //     onChanged:(v){},
-                //     activeColor: kBrandOrange,
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(4),
-                //     ),
-                //   ),
-                // ),
+                 Transform.scale(
+                  scale: 1.2,
+                  child: Obx(
+                    ()=> Checkbox(
+                      value:cart.checkAll.value,
+                      onChanged:(value){
+                        cart.selectAll(value ?? false);
+                      },
+                      activeColor: kBrandOrange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   "Tất cả",
@@ -322,12 +332,14 @@ class FromShoppingCart extends State<ShoppingCart> {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  '${currencyFormatter.format(1000)} ₫',
-                  style: GoogleFonts.nunitoSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: kBrandOrange,
+                Obx(
+                  () => Text(
+                    '${currencyFormatter.format(cart.sumItem.value)} ₫',
+                    style: GoogleFonts.nunitoSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: kBrandOrange,
+                    ),
                   ),
                 ),
               ],
