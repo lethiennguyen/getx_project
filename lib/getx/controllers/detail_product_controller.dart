@@ -64,30 +64,30 @@ class DetailProductController extends GetxController {
 
   Future<bool> upDateProduct(
       id, {
-        required  name,
+        required String name,
         required int price,
         required int quantity,
-        required cover,
+        required String coverUrl,
       }) async {
     autovalidateMode.value = AutovalidateMode.always;
 
     final isValid  = formKey.currentState?.validate() ?? false;
-    final hasCover = cover.value.isNotEmpty;
+    final hasCover = coverUrl.isNotEmpty;
     if (!isValid || !hasCover) {
       if (!hasCover) {
         Get.snackbar('Lỗi', 'Vui lòng chọn ảnh sản phẩm', snackPosition: SnackPosition.TOP);
+        return false;
       }
-      return false;
-    }
 
+    }
     isSubmitting.value = true;
     try {
       final result = await respon.putProductUpdate(
         id,
-        name: name.text.trim(),
+        name: name.trim(),
         price: price,
         quantity: quantity,
-        cover: cover.value,
+        cover: coverUrl,
       );
       product.value = result;
       return result != null;

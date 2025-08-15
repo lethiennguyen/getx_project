@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/getx/controllers/detail_product_controller.dart';
@@ -59,14 +60,63 @@ class FormProductInformation extends State<ProductInformation> {
       ),
       elevation: 0,
       actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/shopping_cart');
-          },
-          icon: SvgPicture.asset(IconsAssets.shopping_cart),
-          tooltip: 'Giỏ hàng',
+        Container(
+          margin: EdgeInsets.only(right: 16),
+          child: Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  Get.toNamed('/shopping_cart');
+                },
+                icon: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: SvgPicture.asset(
+                    IconsAssets.shopping_cart,
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                tooltip: 'Giỏ hàng',
+              ),
+              // Cart badge
+              Obx(() => cart.items.isNotEmpty ?
+              Positioned(
+                right: 6,
+                top: 6,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: kBrandOrange,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: kBrandOrange.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  constraints: BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Text(
+                    '${cart.items.length}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ) : SizedBox.shrink(),
+              ),
+            ],
+          ),
         ),
-        SizedBox(width: 8),
       ],
     );
   }
@@ -234,6 +284,7 @@ class FormProductInformation extends State<ProductInformation> {
             final result = await showDialogProductDelete();
             if (result == true) {
               final resultDelete = await controller.deleteProduct(product.id);
+              await cart.removeById(product.id);
               if (resultDelete == true) {
                 await Future.delayed(Duration(milliseconds: 100));
                 Get.offAllNamed('/home');
@@ -256,15 +307,13 @@ class FormProductInformation extends State<ProductInformation> {
               ShowPopUp.bottomSheet(context, controller),
               isScrollControlled: true,
             );
-
             controller.upDateProduct(
               controller.product.value?.id,
               name: result['name'],
               price: int.parse(result['price']),
               quantity: int.parse(result['quantity']),
-              cover: result['cover'],
+              coverUrl: result['cover'],
             );
-            Get.delete<DetailProductController>();
           }
         },
         icon: Icons.shopping_cart,
