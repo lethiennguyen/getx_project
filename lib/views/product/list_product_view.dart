@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/shopping_cart/hive_shopping_cart.dart';
@@ -38,14 +39,63 @@ class ProductListScreen extends State<ProductList> {
       backgroundColor: Colors.white,
       elevation: 0,
       actions: [
-        IconButton(
-          onPressed: () {
-            Get.toNamed('/shopping_cart');
-          },
-          icon: SvgPicture.asset(IconsAssets.shopping_cart),
-          tooltip: 'Giỏ hàng',
+        Container(
+          margin: EdgeInsets.only(right: 16),
+          child: Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  Get.toNamed('/shopping_cart');
+                },
+                icon: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: SvgPicture.asset(
+                    IconsAssets.shopping_cart,
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                tooltip: 'Giỏ hàng',
+              ),
+              // Cart badge
+              Obx(() => cart.items.isNotEmpty ?
+              Positioned(
+                right: 6,
+                top: 6,
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: kBrandOrange,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: kBrandOrange.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  constraints: BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Text(
+                    '${cart.items.length}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ) : SizedBox.shrink(),
+              ),
+            ],
+          ),
         ),
-        SizedBox(width: 8),
       ],
       bottom: PreferredSize(
         preferredSize: Size.fromHeight(1),
