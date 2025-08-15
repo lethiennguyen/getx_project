@@ -75,7 +75,7 @@ class FromShoppingCart extends State<ShoppingCart> {
               quantity: item.quantity,
               cover: item.cover,
               onDelete: () {
-                cart.removeAt(index);
+                cart.removeById(item.id);
               },
               context: context,
               index: index

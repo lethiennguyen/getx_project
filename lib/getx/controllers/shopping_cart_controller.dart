@@ -30,6 +30,14 @@ class CartController extends GetxController {
     sumItem.value = 0.0;
     super.onClose();
   }
+  Future<void> removeById(int? id) async {
+    final index = items.indexWhere((item) => item.id == id);
+      items.removeAt(index);
+      checked.removeAt(index);
+      _box.deleteAt(index);
+      sum();
+
+  }
   // thêm sản phẩm vào giỏ hàng
   Future<void> addItem(CartItem item) async {
     final exists = items.any((e) => e.id == item.id);
