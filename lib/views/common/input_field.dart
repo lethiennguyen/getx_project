@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:getx_statemanagement/views/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
-// cho update vas create
 class ModernInputField extends StatefulWidget {
   final String label;
   final String hintText;
@@ -11,6 +9,7 @@ class ModernInputField extends StatefulWidget {
   final FocusNode focusNode;
   final TextInputType keyboardType;
   final bool isPassword;
+  final FormFieldValidator<String>? validator;
 
   const ModernInputField({
     super.key,
@@ -20,22 +19,19 @@ class ModernInputField extends StatefulWidget {
     required this.focusNode,
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
+    this.validator,
   });
-
   @override
   State<ModernInputField> createState() => _ModernInputFieldState();
 }
 
 class _ModernInputFieldState extends State<ModernInputField> {
-  bool _obscure = true;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Label
         Text(
           widget.label,
           style: GoogleFonts.nunitoSans(
@@ -49,7 +45,8 @@ class _ModernInputFieldState extends State<ModernInputField> {
           focusNode: widget.focusNode,
           controller: widget.controller,
           keyboardType: widget.keyboardType,
-          cursorColor: Colors.white,
+          cursorColor: kBrandOrange,
+          validator: widget.validator,
           style: GoogleFonts.nunitoSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -70,9 +67,17 @@ class _ModernInputFieldState extends State<ModernInputField> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: Color(0xffEBECED), width: 2),
             ),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: kBrandOrange2),
+              borderRadius: BorderRadius.circular(6),
+            ),
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
       ],
     );
   }

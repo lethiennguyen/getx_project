@@ -1,31 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getx_statemanagement/constans/hive_constants.dart';
-import 'package:getx_statemanagement/data/core/api_client.dart';
-import 'package:getx_statemanagement/data/repositories/users_repositories.dart';
-import 'package:getx_statemanagement/views/home/home.dart';
+import 'package:getx_statemanagement/views/home/home_page.dart';
 import 'package:getx_statemanagement/views/login/login.dart';
+import 'package:getx_statemanagement/views/product/create_product_view.dart';
+import 'package:getx_statemanagement/views/product/detail_product_view.dart';
+import 'package:getx_statemanagement/views/shopping_cart/shopping_cart_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
+
+import 'constans/hive_constants.dart';
+import 'constans/shopping_cart/hive_shopping_cart.dart';
+import 'getx/controllers/app_controller.dart';
+import 'getx/controllers/shopping_cart_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
+  Hive.registerAdapter(CartItemAdapter());
   await Hive.openBox(HiveBoxNames.auth);
-  final box = Hive.box(HiveBoxNames.auth);
-  final bool isLoggedIn = box.get('isLoggedIn', defaultValue: false);
+  await Hive.openBox<CartItem>(HiveBoxNames.cartbox);
+  final appController = Get.put<AppController>(
+    AppController(),
+    permanent: true,
+  );
 
-  final authRepo = AuthRepository(dio);
-  runApp(MyApp(authRepo, initialRoute: isLoggedIn ? '/home' : '/login'));
+  runApp(MyApp(appController: appController));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp(
-    AuthRepository authRepo, {
-    super.key,
-    required String initialRoute,
-  });
+  final AppController appController;
+  const MyApp({super.key, required this.appController});
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +53,15 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       getPages: [
         GetPage(name: '/login', page: () => MyHomeLogin()),
-        GetPage(name: '/home', page: () => LogoutScreen()),
+        GetPage(name: '/home', page: () => LogoutPage()),
+        GetPage(name: '/thongtinsanpham', page: () => ProductInformation()),
+        GetPage(name: '/add_product', page: () => CreateProduct()),
+        GetPage(name: '/shopping_cart', page: () => ShoppingCart()),
       ],
-      home: MyHomeLogin(),
+      initialRoute: appController.isLoggedIn.value ? '/home' : '/login',
+      initialBinding: BindingsBuilder(() {
+        Get.put<CartController>(CartController(), permanent: true);
+      }),
     );
   }
 }

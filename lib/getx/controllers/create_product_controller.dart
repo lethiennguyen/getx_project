@@ -1,0 +1,89 @@
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../data/dio/dio.dart';
+import '../../data/model/product.dart';
+import '../../data/repositories/product_reponsitories.dart';
+import '../../data/upload_image/image_picker_service.dart';
+
+class CreateProductController extends GetxController {
+  final name = TextEditingController();
+  final price = TextEditingController();
+  final quantity = TextEditingController();
+  final FocusNode nameFocus = FocusNode();
+  final FocusNode priceFocus = FocusNode();
+  final FocusNode quantityFocus = FocusNode();
+  final cover = ''.obs;
+
+  final respon = CreateProductRepository(dio);
+  final imageService = ImagePickerService();
+  var product = Rx<Product?>(null);
+
+  final formKey = GlobalKey<FormState>();
+
+  final isSubmitting = false.obs;
+  final autovalidateMode = AutovalidateMode.disabled.obs;
+  var isUploading = false.obs;
+
+  Future<bool> createProduct({
+    required TextEditingController name,
+    required TextEditingController priceCtrl,
+    required TextEditingController quantityCtrl,
+    required RxString cover,
+  }) async {
+    autovalidateMode.value = AutovalidateMode.always;
+
+    final isValid = formKey.currentState?.validate() ?? false;
+    final hasCover = cover.value.isNotEmpty;
+    if (!isValid || !hasCover) {
+      if (!hasCover) {
+        Get.snackbar('Lỗi', 'Vui lòng chọn ảnh sản phẩm',
+            snackPosition: SnackPosition.TOP);
+      }
+      return false;
+    }
+
+    isSubmitting.value = true;
+    try {
+      final result = await respon.postCreateProdcut(
+        name: name.text.trim(),
+        price: int.parse(priceCtrl.text),
+        quantity: int.parse(quantityCtrl.text),
+        cover: cover.value,
+      );
+      return result != null;
+    } catch (e) {
+      return false;
+    } finally {
+      isSubmitting.value = false;
+    }
+  }
+
+  void revalidateOnChange() {
+    if (autovalidateMode.value == AutovalidateMode.always) {
+      formKey.currentState?.validate();
+    }
+  }
+
+  @override
+  void onClose() {
+    name.dispose();
+    super.onClose();
+  }
+  Future<void> pickAndUploadImage() async {
+    try {
+      final image = await imageService.pickImage(ImageSource.gallery);
+      if (image == null) return;
+      final url = await imageService.uploadToCloudinary(image);
+      print("url : $url");
+      if (url != null) {
+        cover.value = url;
+      } else {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+}

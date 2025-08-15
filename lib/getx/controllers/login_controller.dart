@@ -64,6 +64,8 @@ class LoginController extends GetxController {
         password: password.text,
       );
       if (result != null) {
+        final box = Hive.box(HiveBoxNames.auth);
+        box.put('isLoggedIn', true);
         Get.offAllNamed('/home');
       }
     } catch (e) {

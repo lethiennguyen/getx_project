@@ -7,7 +7,7 @@ class Pictures extends Assets {
 }
 
 class IconsAssets extends Assets {
-  static const String shopping_cart = "${Assets.base}shopping_cart.png";
+  static const String shopping_cart = "${Assets.base}shopping_cart_bag.svg";
   static const String start = "${Assets.base}start.svg";
   static const String eye_slash = "${Assets.base}eye-slash.svg";
   static const String eye = "${Assets.base}eye.svg";
