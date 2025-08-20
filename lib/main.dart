@@ -4,6 +4,7 @@ import 'package:getx_statemanagement/views/home/home_page.dart';
 import 'package:getx_statemanagement/views/login/login.dart';
 import 'package:getx_statemanagement/views/product/create_product_view.dart';
 import 'package:getx_statemanagement/views/product/detail_product_view.dart';
+import 'package:getx_statemanagement/views/shopping_cart/payment_view.dart';
 import 'package:getx_statemanagement/views/shopping_cart/shopping_cart_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
