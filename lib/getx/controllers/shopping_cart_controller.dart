@@ -7,11 +7,12 @@ class CartController extends GetxController {
   late final Box<CartItem> _box;
 
   final RxList<CartItem> items = <CartItem>[].obs;
-  final RxList<bool> checked =<bool>[].obs;
+  final RxList<bool> checked = <bool>[].obs;
   final RxBool checkAll = false.obs;
   final RxDouble sumItem = 0.0.obs;
   final isIncrease = false.obs;
   final isDecrease = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -21,8 +22,8 @@ class CartController extends GetxController {
     checkAll.value = false;
     sumItem.value = 0.0;
     sum();
-
   }
+
   @override
   void onClose() {
     checked.clear();

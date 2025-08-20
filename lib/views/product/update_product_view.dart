@@ -65,8 +65,6 @@ class ShowPopUp {
             keyboardType: TextInputType.text,
           ),
           ModernInputField(
-            label: 'Giá',
-            hintText: 'Nhập giá sản phẩm',
             label: ProductField.price.lable,
             hintText: ProductField.price.hint,
             controller: controller.price,
