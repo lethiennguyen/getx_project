@@ -12,6 +12,7 @@ import 'constans/hive_constants.dart';
 import 'constans/shopping_cart/hive_shopping_cart.dart';
 import 'getx/controllers/app_controller.dart';
 import 'getx/controllers/shopping_cart_controller.dart';
+import 'getx/service/network_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,12 +25,13 @@ void main() async {
     AppController(),
     permanent: true,
   );
-
+  await Get.putAsync(() => NetworkService().init());
   runApp(MyApp(appController: appController));
 }
 
 class MyApp extends StatelessWidget {
   final AppController appController;
+
   const MyApp({super.key, required this.appController});
 
   @override
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/thongtinsanpham', page: () => ProductInformation()),
         GetPage(name: '/add_product', page: () => CreateProduct()),
         GetPage(name: '/shopping_cart', page: () => ShoppingCart()),
+        GetPage(name: '/payment', page: () => PayMentView()),
       ],
       initialRoute: appController.isLoggedIn.value ? '/home' : '/login',
       initialBinding: BindingsBuilder(() {

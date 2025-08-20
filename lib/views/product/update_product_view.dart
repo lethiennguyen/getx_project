@@ -4,6 +4,7 @@ import 'package:getx_statemanagement/getx/controllers/detail_product_controller.
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/upload_image/upload_image_network.dart';
+import '../../enums/product_field.dart';
 import '../common/input_field.dart';
 
 class ShowPopUp {
@@ -56,24 +57,29 @@ class ShowPopUp {
           _imagePicker(controller),
           const SizedBox(height: 16),
           ModernInputField(
-            label: 'Sản phẩm',
-            hintText: 'Nhập tên sản phẩm',
+            label: ProductField.name.lable ,
+            hintText: ProductField.name.hint,
             controller: controller.name,
-            focusNode: FocusNode(),
+            focusNode: controller.nameFocus,
+            validator: ProductField.name.validate,
             keyboardType: TextInputType.text,
           ),
           ModernInputField(
             label: 'Giá',
             hintText: 'Nhập giá sản phẩm',
+            label: ProductField.price.lable,
+            hintText: ProductField.price.hint,
             controller: controller.price,
-            focusNode: FocusNode(),
+            focusNode: controller.priceFocus,
+            validator: ProductField.price.validate,
             keyboardType: TextInputType.number,
           ),
           ModernInputField(
-            label: 'Số lượng',
-            hintText: 'Nhập số lượng',
+            label: ProductField.quantity.lable,
+            hintText: ProductField.quantity.hint,
+            validator: ProductField.quantity.validate,
             controller: controller.quantity,
-            focusNode: FocusNode(),
+            focusNode: controller.quantityFocus,
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 80),

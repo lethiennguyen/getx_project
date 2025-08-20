@@ -351,7 +351,17 @@ class FromShoppingCart extends State<ShoppingCart> {
             flex: 2,
             child: GestureDetector(
               onTap: () {
-                // Handle buy action
+                // if (cart.sumItem.value > 0) {
+                //   Get.toNamed('/payment');
+                // } else {
+                //   Get.snackbar(
+                //     'Thông báo',
+                //     'Giỏ hàng của bạn đang trống',
+                //     snackPosition: SnackPosition.TOP,
+                //     backgroundColor: Colors.red.withOpacity(0.8),
+                //     colorText: Colors.white,
+                //   );
+                // }
               },
               child: Container(
                 height: 48,

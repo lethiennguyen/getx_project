@@ -24,6 +24,7 @@ class ProductListScreen extends State<ProductList> {
   Category _category = Category.all;
   final controller = Get.put(ListProductController());
   final cart = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,35 +64,41 @@ class ProductListScreen extends State<ProductList> {
                 tooltip: 'Giỏ hàng',
               ),
               // Cart badge
-              Obx(() => cart.items.isNotEmpty ?
-              Positioned(
-                right: 6,
-                top: 6,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: kBrandOrange,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: kBrandOrange.withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  constraints: BoxConstraints(minWidth: 16, minHeight: 16),
-                  child: Text(
-                    '${cart.items.length}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ) : SizedBox.shrink(),
+              Obx(
+                () =>
+                    cart.items.isNotEmpty
+                        ? Positioned(
+                          right: 6,
+                          top: 6,
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: kBrandOrange,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kBrandOrange.withOpacity(0.3),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '${cart.items.length}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                        : SizedBox.shrink(),
               ),
             ],
           ),

@@ -12,7 +12,7 @@ extension ProductFieldExtentsion on ProductField {
       case ProductField.price:
         return "Giá";
       case ProductField.quantity:
-        return "Số lượng";
+        return "Số lượng tồn kho";
     }
   }
 
@@ -23,7 +23,7 @@ extension ProductFieldExtentsion on ProductField {
       case ProductField.price:
         return "Giá";
       case ProductField.quantity:
-        return "Số lượng";
+        return "Số lượng tồn kho";
       case ProductField.cover:
         return "Chọn ảnh sản phẩm";
     }
