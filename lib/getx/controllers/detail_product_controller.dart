@@ -6,6 +6,7 @@ import 'package:getx_statemanagement/data/upload_image/image_picker_service.dart
 import 'package:image_picker/image_picker.dart';
 
 import '../../data/dio/dio.dart';
+import '../../enums/discount.dart';
 
 class DetailProductController extends GetxController {
   final respon = ProductDetailRepository(dio);
@@ -26,6 +27,25 @@ class DetailProductController extends GetxController {
   final isSubmitting = false.obs;
   final isUploading = false.obs;
   final imageUrl = ''.obs;
+
+  // Lấy danh sách discount từ enum
+  List<Discount> get discounts => Discount.values;
+  final totalPrice = 0.0.obs;
+  final selectedDiscount = Discount.none.obs;
+
+  void calculateDiscount() {
+    final double basePrice = double.tryParse(price.text) ?? 0.0;
+    final discountPercent = selectedDiscount.value.value;
+    totalPrice.value = basePrice * (1 - discountPercent / 100);
+
+    String baseName = name.text.split(" - Giảm").first.trim();
+    if (discountPercent > 0) {
+      name.text = "$baseName - Giảm ${discountPercent}%";
+    } else {
+      name.text = baseName;
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -63,22 +83,25 @@ class DetailProductController extends GetxController {
   }
 
   Future<bool> upDateProduct(
-      id, {
-        required String name,
-        required int price,
-        required int quantity,
-        required String coverUrl,
-      }) async {
+    id, {
+    required String name,
+    required int price,
+    required int quantity,
+    required String coverUrl,
+  }) async {
     autovalidateMode.value = AutovalidateMode.always;
 
-    final isValid  = formKey.currentState?.validate() ?? false;
+    final isValid = formKey.currentState?.validate() ?? false;
     final hasCover = coverUrl.isNotEmpty;
     if (!isValid || !hasCover) {
       if (!hasCover) {
-        Get.snackbar('Lỗi', 'Vui lòng chọn ảnh sản phẩm', snackPosition: SnackPosition.TOP);
+        Get.snackbar(
+          'Lỗi',
+          'Vui lòng chọn ảnh sản phẩm',
+          snackPosition: SnackPosition.TOP,
+        );
         return false;
       }
-
     }
     isSubmitting.value = true;
     try {
@@ -92,13 +115,16 @@ class DetailProductController extends GetxController {
       product.value = result;
       return result != null;
     } catch (e) {
-      Get.snackbar('Lỗi', 'Không thể lưu. Vui lòng thử lại.', snackPosition: SnackPosition.TOP);
+      Get.snackbar(
+        'Lỗi',
+        'Không thể lưu. Vui lòng thử lại.',
+        snackPosition: SnackPosition.TOP,
+      );
       return false;
     } finally {
       isSubmitting.value = false;
     }
   }
-
 
   Future<String?> pickAndUploadImage() async {
     try {

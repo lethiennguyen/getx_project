@@ -147,7 +147,7 @@ class ProductListScreen extends State<ProductList> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 3 / 4.5,
+                childAspectRatio: 3 / 5.2,
               ),
             ),
           ),
@@ -244,7 +244,7 @@ class ProductListScreen extends State<ProductList> {
                   ),
                 ),
               ),
-              Expanded(
+              Flexible(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Column(
@@ -271,9 +271,9 @@ class ProductListScreen extends State<ProductList> {
                             Text(
                               '${controller.formatPrice(product.price)}',
                               style: GoogleFonts.nunitoSans(
-                                fontSize: 13,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.black,
+                                color: kBrandOrange,
                               ),
                             ),
                             GestureDetector(
@@ -296,14 +296,14 @@ class ProductListScreen extends State<ProductList> {
                                 }
                               },
                               child: Container(
-                                padding: EdgeInsets.all(6),
+                                padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   color: kBrandOrange,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   Icons.add,
-                                  size: 20,
+                                  size: 15,
                                   color: Colors.white,
                                 ),
                               ),

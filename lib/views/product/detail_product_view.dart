@@ -27,6 +27,7 @@ class FormProductInformation extends State<ProductInformation> {
   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
   final controller = Get.put(DetailProductController());
   final cart = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,35 +85,41 @@ class FormProductInformation extends State<ProductInformation> {
                 tooltip: 'Giỏ hàng',
               ),
               // Cart badge
-              Obx(() => cart.items.isNotEmpty ?
-              Positioned(
-                right: 6,
-                top: 6,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: kBrandOrange,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: kBrandOrange.withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  constraints: BoxConstraints(minWidth: 16, minHeight: 16),
-                  child: Text(
-                    '${cart.items.length}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ) : SizedBox.shrink(),
+              Obx(
+                () =>
+                    cart.items.isNotEmpty
+                        ? Positioned(
+                          right: 6,
+                          top: 6,
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: kBrandOrange,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kBrandOrange.withOpacity(0.3),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '${cart.items.length}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                        : SizedBox.shrink(),
               ),
             ],
           ),
@@ -284,7 +291,9 @@ class FormProductInformation extends State<ProductInformation> {
             final result = await showDialogProductDelete();
             if (result == true) {
               final resultDelete = await controller.deleteProduct(product.id);
-              await cart.removeById(product.id);
+              if (await cart.isItemInCart(product.id)) {
+                await cart.removeById(product.id);
+              }
               if (resultDelete == true) {
                 await Future.delayed(Duration(milliseconds: 100));
                 Get.offAllNamed('/home');
@@ -307,13 +316,15 @@ class FormProductInformation extends State<ProductInformation> {
               ShowPopUp.bottomSheet(context, controller),
               isScrollControlled: true,
             );
-            controller.upDateProduct(
-              controller.product.value?.id,
-              name: result['name'],
-              price: int.parse(result['price']),
-              quantity: int.parse(result['quantity']),
-              coverUrl: result['cover'],
-            );
+            if (result != null) {
+              controller.upDateProduct(
+                controller.product.value?.id,
+                name: result['name'],
+                price: int.parse(result['price']),
+                quantity: int.parse(result['quantity']),
+                coverUrl: result['cover'],
+              );
+            }
           }
         },
         icon: Icons.shopping_cart,

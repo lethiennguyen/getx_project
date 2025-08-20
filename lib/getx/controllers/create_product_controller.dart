@@ -6,6 +6,7 @@ import '../../data/dio/dio.dart';
 import '../../data/model/product.dart';
 import '../../data/repositories/product_reponsitories.dart';
 import '../../data/upload_image/image_picker_service.dart';
+import '../../enums/discount.dart';
 
 class CreateProductController extends GetxController {
   final name = TextEditingController();
@@ -26,6 +27,18 @@ class CreateProductController extends GetxController {
   final autovalidateMode = AutovalidateMode.disabled.obs;
   var isUploading = false.obs;
 
+  var selectedTax = Tax.none.obs;
+
+  // Lấy danh sách discount từ enum
+  List<Tax> get discounts => Tax.values;
+  final totalPrice = 0.0.obs;
+
+  void calculateDiscount() {
+    final double basePrice = double.tryParse(price.text) ?? 0.0;
+    final taxPercent = selectedTax.value.value; // % từ enum
+    totalPrice.value = basePrice * (1 + taxPercent / 100);
+  }
+
   Future<bool> createProduct({
     required TextEditingController name,
     required TextEditingController priceCtrl,
@@ -38,8 +51,11 @@ class CreateProductController extends GetxController {
     final hasCover = cover.value.isNotEmpty;
     if (!isValid || !hasCover) {
       if (!hasCover) {
-        Get.snackbar('Lỗi', 'Vui lòng chọn ảnh sản phẩm',
-            snackPosition: SnackPosition.TOP);
+        Get.snackbar(
+          'Lỗi',
+          'Vui lòng chọn ảnh sản phẩm',
+          snackPosition: SnackPosition.TOP,
+        );
       }
       return false;
     }
@@ -71,6 +87,7 @@ class CreateProductController extends GetxController {
     name.dispose();
     super.onClose();
   }
+
   Future<void> pickAndUploadImage() async {
     try {
       final image = await imageService.pickImage(ImageSource.gallery);

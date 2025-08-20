@@ -40,10 +40,16 @@ class CartController extends GetxController {
   // xóa theo id
   Future<void> removeById(int? id) async {
     final index = items.indexWhere((item) => item.id == id);
+    if (index == -1) return;
     items.removeAt(index);
     checked.removeAt(index);
     _box.deleteAt(index);
     sum();
+  }
+
+  // kiểm tra xem sản phẩm này đã có trong giỏ hàng hay chưa
+  bool isItemInCart(int? id) {
+    return items.any((item) => item.id == id);
   }
 
   // thêm sản phẩm vào giỏ hàng
@@ -93,16 +99,6 @@ class CartController extends GetxController {
   void selectAll(bool value) {
     checkAll.value = value;
     checked.assignAll(List<bool>.filled(items.length, value));
-    sum();
-  }
-
-  // xóa theo index
-  Future<void> removeAt(int index) async {
-    if (!checked[index]) return;
-    final key = _box.keyAt(index);
-    await _box.delete(key);
-    items.removeAt(index);
-    checked.removeAt(index);
     sum();
   }
 
