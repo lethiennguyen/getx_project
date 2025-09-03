@@ -18,6 +18,7 @@ class ShoppingCart extends StatefulWidget {
 class FromShoppingCart extends State<ShoppingCart> {
   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
   final cart = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +34,7 @@ class FromShoppingCart extends State<ShoppingCart> {
       leading: IconButton(
         onPressed: () {
           Get.delete<CartController>();
+
           Get.back();
         },
         icon: Icon(Icons.arrow_back_ios_new),
@@ -50,7 +52,12 @@ class FromShoppingCart extends State<ShoppingCart> {
         child: Container(color: Colors.black26, height: 0.5),
       ),
       actions: [
-        IconButton(onPressed: () {cart.removeSelected();}, icon: Image.asset(IconsAssets.trash_can)),
+        IconButton(
+          onPressed: () {
+            cart.removeSelected();
+          },
+          icon: Image.asset(IconsAssets.trash_can),
+        ),
         SizedBox(width: 8),
       ],
     );
@@ -78,7 +85,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                 cart.removeById(item.id);
               },
               context: context,
-              index: index
+              index: index,
             ),
           );
         },
@@ -121,9 +128,9 @@ class FromShoppingCart extends State<ShoppingCart> {
           children: [
             SizedBox(width: 10),
             Obx(
-              ()=> Checkbox(
+              () => Checkbox(
                 value: cart.checked[index],
-                onChanged: (v) => cart.select(index,v ??false ),
+                onChanged: (v) => cart.select(index, v ?? false),
                 activeColor: kBrandOrange,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -174,7 +181,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                 ),
               ),
             ),
-            increaseOrDecreaseSalary(index,quantity),
+            increaseOrDecreaseSalary(index, quantity),
             SizedBox(width: 10),
           ],
         ),
@@ -238,13 +245,13 @@ class FromShoppingCart extends State<ShoppingCart> {
                       ),
                     ),
                     child: Center(
-                      child:  Text(
-                            '$quantity',
-                            style: GoogleFonts.nunitoSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: textColorGray,
-                            ),
+                      child: Text(
+                        '$quantity',
+                        style: GoogleFonts.nunitoSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: textColorGray,
+                        ),
                       ),
                     ),
                   ),
@@ -289,12 +296,12 @@ class FromShoppingCart extends State<ShoppingCart> {
             flex: 2,
             child: Row(
               children: [
-                 Transform.scale(
+                Transform.scale(
                   scale: 1.2,
                   child: Obx(
-                    ()=> Checkbox(
-                      value:cart.checkAll.value,
-                      onChanged:(value){
+                    () => Checkbox(
+                      value: cart.checkAll.value,
+                      onChanged: (value) {
                         cart.selectAll(value ?? false);
                       },
                       activeColor: kBrandOrange,

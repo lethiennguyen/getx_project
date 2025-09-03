@@ -183,7 +183,6 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
               ),
               errorText: null,
               contentPadding: EdgeInsets.all(16),
-
               hintText: field.hint,
               suffixIcon:
                   isPassword

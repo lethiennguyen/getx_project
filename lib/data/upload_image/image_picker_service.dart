@@ -22,7 +22,7 @@ class ImagePickerService {
 
   Future<String?> uploadToCloudinary(File imageFile) async {
     try {
-      var request = http.MultipartRequest(
+      final request = http.MultipartRequest(
         'POST',
         Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload'),
       );

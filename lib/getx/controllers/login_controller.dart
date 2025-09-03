@@ -20,6 +20,7 @@ class LoginController extends GetxController {
   final fieldErrors = <LoginField, RxnString>{
     for (var field in LoginField.values) field: RxnString(),
   };
+
   String _getText(LoginField field) => controllers[field]?.text ?? '';
 
   late final Map<LoginField, RxString> texts = {
@@ -31,6 +32,7 @@ class LoginController extends GetxController {
   final submitted = false.obs;
   final isClearing = false.obs;
   final authRepository = AuthRepository(dio);
+
   @override
   void onInit() {
     super.onInit();
@@ -66,6 +68,7 @@ class LoginController extends GetxController {
       if (result != null) {
         final box = Hive.box(HiveBoxNames.auth);
         box.put('isLoggedIn', true);
+
         Get.offAllNamed('/home');
       }
     } catch (e) {

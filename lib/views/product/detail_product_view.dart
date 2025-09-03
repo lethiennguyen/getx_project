@@ -68,6 +68,7 @@ class FormProductInformation extends State<ProductInformation> {
               IconButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
+
                   Get.toNamed('/shopping_cart');
                 },
                 icon: Container(
