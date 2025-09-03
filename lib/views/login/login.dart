@@ -6,6 +6,7 @@ import 'package:getx_statemanagement/enums/login_field.dart';
 import 'package:getx_statemanagement/getx/controllers/login_controller.dart';
 import 'package:getx_statemanagement/views/common/app_colors.dart';
 import 'package:getx_statemanagement/views/common/dialog.dart';
+import 'package:getx_statemanagement/views/common/size_box.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
@@ -58,9 +59,9 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
   Widget _formLogin() {
     return Stack(
       children: [
-        const SizedBox(height: 76),
+        SizedBoxCustom.h76,
         SvgPicture.asset(Pictures.logo, width: 158, height: 37),
-        const SizedBox(height: 61),
+        SizedBoxCustom.h61,
         SingleChildScrollView(
           padding: EdgeInsets.only(top: 137, right: 16, left: 16),
           child: Form(
@@ -128,7 +129,7 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(asset, width: 20, height: 20),
-            const SizedBox(width: 8),
+            SizedBoxCustom.h8,
             Text(
               textButton,
               style: GoogleFonts.nunitoSans(
@@ -248,7 +249,7 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
               ),
             ),
           ),
-          SizedBox(height: 4),
+          SizedBoxCustom.h4,
         ],
       );
     });

@@ -7,6 +7,7 @@ import '../../data/upload_image/upload_image_network.dart';
 import '../../enums/discount.dart';
 import '../../enums/product_field.dart';
 import '../common/input_field.dart';
+import '../common/size_box.dart';
 
 class ShowPopUp {
   static Widget bottomSheet(
@@ -56,7 +57,7 @@ class ShowPopUp {
       child: Column(
         children: [
           _imagePicker(controller),
-          const SizedBox(height: 16),
+          SizedBoxCustom.h16,
           ModernInputField(
             label: ProductField.name.lable,
             hintText: ProductField.name.hint,
@@ -74,7 +75,7 @@ class ShowPopUp {
             focusNode: controller.quantityFocus,
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 80),
+          SizedBoxCustom.h80,
           ElevatedButton(
             onPressed: () {
               Get.back(
@@ -127,7 +128,7 @@ class ShowPopUp {
                 },
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBoxCustom.h12,
             Expanded(
               flex: 1,
               child: ModernDropdownField<Discount>(
@@ -145,7 +146,7 @@ class ShowPopUp {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBoxCustom.h8,
         ModernInputField(
           label: "Thành tiền",
           controller: TextEditingController(
@@ -154,7 +155,7 @@ class ShowPopUp {
           hintText: "0 đ",
           readOnly: true,
         ),
-        const SizedBox(height: 16),
+        SizedBoxCustom.h16,
       ],
     );
   }

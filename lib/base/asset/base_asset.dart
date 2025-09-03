@@ -1,4 +1,4 @@
-class Assets {
+abstract class Assets {
   static const String base = "asset/";
 }
 

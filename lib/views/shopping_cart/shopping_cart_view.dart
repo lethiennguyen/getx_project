@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../base/asset/base_asset.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
+import '../common/size_box.dart';
 
 class ShoppingCart extends StatefulWidget {
   @override
@@ -126,7 +127,7 @@ class FromShoppingCart extends State<ShoppingCart> {
         ),
         child: Row(
           children: [
-            SizedBox(width: 10),
+            SizedBoxCustom.h10,
             Obx(
               () => Checkbox(
                 value: cart.checked[index],
@@ -168,7 +169,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                         color: Color(0xff6B6B6B),
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBoxCustom.h8,
                     Text(
                       '${currencyFormatter.format(price)}đ',
                       style: GoogleFonts.nunitoSans(
@@ -182,7 +183,7 @@ class FromShoppingCart extends State<ShoppingCart> {
               ),
             ),
             increaseOrDecreaseSalary(index, quantity),
-            SizedBox(width: 10),
+            SizedBoxCustom.h10,
           ],
         ),
       ),
@@ -205,7 +206,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                 color: textColorGray,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBoxCustom.h8,
             Container(
               height: 25,
               decoration: BoxDecoration(
@@ -311,7 +312,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 4),
+                SizedBoxCustom.w4,
                 Text(
                   "Tất cả",
                   style: GoogleFonts.nunitoSans(

@@ -13,6 +13,7 @@ import '../../data/model/product.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
 import '../common/dialog.dart';
+import '../common/size_box.dart';
 
 class ProductInformation extends StatefulWidget {
   const ProductInformation({super.key});
@@ -233,9 +234,9 @@ class FormProductInformation extends State<ProductInformation> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _bottomCartShopping(product),
-          SizedBox(width: 3),
+          SizedBoxCustom.w3,
           _bottomDelete(product),
-          SizedBox(width: 3),
+          SizedBoxCustom.w3,
           _bottomUpDate(product),
         ],
       ),

@@ -9,6 +9,7 @@ import '../../data/upload_image/upload_image_network.dart';
 import '../../enums/product_field.dart';
 import '../common/app_colors.dart';
 import '../common/input_field.dart';
+import '../common/size_box.dart';
 
 class CreateProduct extends StatelessWidget {
   final controller = Get.put(CreateProductController());
@@ -91,7 +92,7 @@ class CreateProduct extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBoxCustom.w8,
             Flexible(
               child: ModernDropdownField<Tax>(
                 label: 'Thuế',
@@ -108,7 +109,7 @@ class CreateProduct extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBoxCustom.h16,
         ModernInputField(
           label: "Thành tiền",
           controller: TextEditingController(
@@ -117,7 +118,7 @@ class CreateProduct extends StatelessWidget {
           hintText: "0 đ",
           readOnly: true,
         ),
-        const SizedBox(height: 16),
+        SizedBoxCustom.h16,
       ],
     );
   }

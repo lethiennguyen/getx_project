@@ -1,4 +1,4 @@
-class ApiConfig {
+abstract class ApiConfig {
   static const String baseUrl = 'https://training-api-unrp.onrender.com';
   static final String login = '$baseUrl/login2';
   static final String listProduct = '$baseUrl/products?';
