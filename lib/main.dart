@@ -11,6 +11,7 @@ import 'package:hive_flutter/adapters.dart';
 
 import 'constans/hive_constants.dart';
 import 'constans/shopping_cart/hive_shopping_cart.dart';
+import 'data/dio/dio.dart';
 import 'getx/controllers/app_controller.dart';
 import 'getx/controllers/shopping_cart_controller.dart';
 import 'getx/service/network_service.dart';
@@ -18,7 +19,6 @@ import 'getx/service/network_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-
   Hive.registerAdapter(CartItemAdapter());
   await Hive.openBox(HiveBoxNames.auth);
   await Hive.openBox<CartItem>(HiveBoxNames.cartbox);

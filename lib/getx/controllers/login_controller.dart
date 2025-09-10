@@ -31,7 +31,9 @@ class LoginController extends GetxController {
   final isSubmitting = false.obs;
   final submitted = false.obs;
   final isClearing = false.obs;
-  final authRepository = AuthRepository(dio);
+
+  //final authRepository = AuthRepository(dio);
+  final authRepository = AuthRepository();
 
   @override
   void onInit() {
@@ -43,15 +45,21 @@ class LoginController extends GetxController {
     fieldErrors[field]!.value = field.validate(controllers[field]!.text);
   }
 
-  Future<void> login() async {
-    submitted.value = true;
+  /// Validate tất cả các field
+  bool _validateAllFields() {
     bool hasError = false;
-
     for (var field in LoginField.values) {
       validateField(field);
       if (fieldErrors[field]!.value != null) hasError = true;
     }
-    if (hasError) return;
+    return !hasError;
+  }
+
+  Future<void> login() async {
+    submitted.value = true;
+    if (!_validateAllFields()) {
+      return;
+    }
     isSubmitting.value = true;
     try {
       final tax_code = controllers[LoginField.tax_code];
@@ -72,6 +80,7 @@ class LoginController extends GetxController {
         Get.offAllNamed('/home');
       }
     } catch (e) {
+      print('Login error: $e');
     } finally {
       isSubmitting.value = false;
     }

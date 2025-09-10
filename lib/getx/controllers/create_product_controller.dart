@@ -17,7 +17,8 @@ class CreateProductController extends GetxController {
   final FocusNode quantityFocus = FocusNode();
   final cover = ''.obs;
 
-  final respon = CreateProductRepository(dio);
+  //final respon = CreateProductRepository(dio);
+  final respon = CreateProductRepository();
   final imageService = ImagePickerService();
   var product = Rx<Product?>(null);
 
@@ -46,20 +47,6 @@ class CreateProductController extends GetxController {
     required RxString cover,
   }) async {
     autovalidateMode.value = AutovalidateMode.always;
-
-    final isValid = formKey.currentState?.validate() ?? false;
-    final hasCover = cover.value.isNotEmpty;
-    if (!isValid || !hasCover) {
-      if (!hasCover) {
-        Get.snackbar(
-          'Lỗi',
-          'Vui lòng chọn ảnh sản phẩm',
-          snackPosition: SnackPosition.TOP,
-        );
-      }
-      return false;
-    }
-
     isSubmitting.value = true;
     try {
       final result = await respon.postCreateProdcut(
@@ -96,11 +83,9 @@ class CreateProductController extends GetxController {
       print("url : $url");
       if (url != null) {
         cover.value = url;
-      } else {
-        return;
       }
     } catch (e) {
-      rethrow;
+      print('Lỗi upload ảnh: $e');
     }
   }
 }

@@ -9,7 +9,8 @@ import '../../data/dio/dio.dart';
 import '../../enums/discount.dart';
 
 class DetailProductController extends GetxController {
-  final respon = ProductDetailRepository(dio);
+  //final respon = ProductDetailRepository(dio);
+  final respon = ProductDetailRepository();
   final product = Rx<Product?>(null);
   final name = TextEditingController();
   final price = TextEditingController();
@@ -27,6 +28,8 @@ class DetailProductController extends GetxController {
   final isSubmitting = false.obs;
   final isUploading = false.obs;
   final imageUrl = ''.obs;
+
+  final isLoading = true.obs;
 
   // Lấy danh sách discount từ enum
   List<Discount> get discounts => Discount.values;
@@ -55,12 +58,19 @@ class DetailProductController extends GetxController {
   }
 
   Future<void> fetchDetailProduct(id) async {
-    final result = await respon.getProductDetail(id);
-    product.value = result;
-    name.text = result.name;
-    price.text = result.price.toString();
-    quantity.text = result.quantity.toString();
-    cover.text = result.cover;
+    try {
+      isLoading.value = true;
+      final result = await respon.getProductDetail(id);
+      product.value = result;
+      name.text = result.name;
+      price.text = result.price.toString();
+      quantity.text = result.quantity.toString();
+      cover.text = result.cover;
+    } on Exception catch (e) {
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 1000));
+      isLoading.value = false;
+    }
   }
 
   Future<bool> deleteProduct(id) async {
@@ -91,17 +101,14 @@ class DetailProductController extends GetxController {
   }) async {
     autovalidateMode.value = AutovalidateMode.always;
 
-    final isValid = formKey.currentState?.validate() ?? false;
     final hasCover = coverUrl.isNotEmpty;
-    if (!isValid || !hasCover) {
-      if (!hasCover) {
-        Get.snackbar(
-          'Lỗi',
-          'Vui lòng chọn ảnh sản phẩm',
-          snackPosition: SnackPosition.TOP,
-        );
-        return false;
-      }
+    if (!hasCover) {
+      Get.snackbar(
+        'Lỗi',
+        'Vui lòng chọn ảnh sản phẩm',
+        snackPosition: SnackPosition.TOP,
+      );
+      return false;
     }
     isSubmitting.value = true;
     try {
@@ -138,7 +145,7 @@ class DetailProductController extends GetxController {
       }
       return url;
     } catch (e) {
-      rethrow;
+      return null;
     }
   }
 }

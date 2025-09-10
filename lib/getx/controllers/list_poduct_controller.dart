@@ -17,7 +17,8 @@ class ListProductController extends GetxController {
   final page = 1.obs;
   final size = 10.obs;
 
-  final listProduct = ProductRepository(dio);
+  //final listProduct = ProductRepository(dio);
+  final listProduct = ProductRepository();
 
   final scroll = ScrollController();
   var products = <Product>[].obs;
@@ -59,6 +60,9 @@ class ListProductController extends GetxController {
       products.value = result;
     } on Exception catch (e) {
       print('Lỗi refresh: $e');
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 1000));
+      isLoading.value = false;
     }
   }
 
@@ -80,8 +84,10 @@ class ListProductController extends GetxController {
     if (isLoadingMore.value) return;
     try {
       isLoadingMore.value = true;
-      ++page.value;
-      final request = ProductListRequest(page: page.value, size: size.value);
+      final request = ProductListRequest(
+        page: page.value+ 1,
+        size: size.value,
+      );
       final result = await listProduct.getProductList(request);
       products.addAll(result);
     } catch (e) {
@@ -90,6 +96,7 @@ class ListProductController extends GetxController {
       isLoadingMore.value = false;
     }
   }
+
   String formatPrice(num price) {
     String formatted = currencyFormatter.format(price);
 

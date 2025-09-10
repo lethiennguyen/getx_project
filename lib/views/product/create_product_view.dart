@@ -81,6 +81,7 @@ class CreateProduct extends StatelessWidget {
             Expanded(
               flex: 2,
               child: ModernInputField(
+                isboderRadius: false,
                 label: ProductField.price.lable,
                 hintText: ProductField.price.hint,
                 controller: controller.price,
@@ -92,13 +93,13 @@ class CreateProduct extends StatelessWidget {
                 },
               ),
             ),
-            SizedBoxCustom.w8,
             Flexible(
               child: ModernDropdownField<Tax>(
                 label: 'Thuế',
                 items: Tax.values,
                 value: controller.selectedTax.value,
                 itemLabel: (d) => d.label,
+                focusNode: controller.priceFocus,
                 onChanged: (value) {
                   if (value != null) {
                     controller.selectedTax.value = value;

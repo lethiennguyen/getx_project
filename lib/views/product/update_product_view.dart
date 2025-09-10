@@ -117,6 +117,7 @@ class ShowPopUp {
             Expanded(
               flex: 2,
               child: ModernInputField(
+                isboderRadius: false,
                 label: ProductField.price.lable,
                 hintText: ProductField.price.hint,
                 controller: controller.price,
@@ -136,6 +137,7 @@ class ShowPopUp {
                 items: Discount.values,
                 value: controller.selectedDiscount.value,
                 itemLabel: (d) => d.label,
+                focusNode: controller.priceFocus,
                 onChanged: (value) {
                   if (value != null) {
                     controller.selectedDiscount.value = value;

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/shopping_cart/hive_shopping_cart.dart';
 import 'package:getx_statemanagement/getx/controllers/list_poduct_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../base/asset/base_asset.dart';
 import '../../data/model/product.dart';
 import '../../enums/product_type.dart';
@@ -137,17 +138,20 @@ class ProductListScreen extends State<ProductList> {
 
           SliverPadding(
             padding: const EdgeInsets.all(8),
-            sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) =>
-                    ProductItem(product: controller.products[index]),
-                childCount: controller.products.length,
-              ),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                childAspectRatio: 3 / 5.2,
+            sliver: SliverSkeletonizer(
+              enabled: controller.isLoading.value,
+              child: SliverGrid(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) =>
+                      ProductItem(product: controller.products[index]),
+                  childCount: controller.products.length,
+                ),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 3 / 5,
+                ),
               ),
             ),
           ),
@@ -201,121 +205,117 @@ class ProductListScreen extends State<ProductList> {
   }
 
   Widget ProductItem({required Product product}) {
-    return Container(
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: Material(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(8),
-      child: GestureDetector(
-        onTap: () async {
-          final result = await Get.toNamed(
-            '/thongtinsanpham',
-            arguments: product.id,
-          );
-          if (result != null || result == 'deleted') {
-            controller.refreshPage();
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: textGray),
-            borderRadius: BorderRadius.circular(17),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0, 2),
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    product.cover,
-                    fit: BoxFit.cover,
-                    height: 160,
+        shadowColor: Color(0xffDBDBDB).withOpacity(0.4),
+        child: InkWell(
+          splashColor: Colors.grey.withOpacity(0.2),
+          highlightColor: Colors.grey.withOpacity(0.1),
+
+          onTap: () async {
+            await Future.delayed(const Duration(milliseconds: 100));
+            final result = await Get.toNamed(
+              '/thongtinsanpham',
+              arguments: product.id,
+            );
+            if (result != null || result == 'deleted') {
+              controller.refreshPage();
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: textGray),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      product.cover,
+                      fit: BoxFit.cover,
+                      height: 160,
+                    ),
                   ),
                 ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        product.name,
-                        style: GoogleFonts.nunitoSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          product.name,
+                          style: GoogleFonts.nunitoSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: 16,
-                          top: 8,
-                          right: 8,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${controller.formatPrice(product.price)}',
-                              style: GoogleFonts.nunitoSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w900,
-                                color: kBrandOrange,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                final id = product.id;
-                                if (id != null) {
-                                  final item = CartItem(
-                                    id: id,
-                                    name: product.name,
-                                    price: product.price,
-                                    quantity: 1,
-                                    cover: product.cover,
-                                  );
-                                  cart.addItem(item);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Đã thêm vào giỏ hàng!'),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 16,
+                            top: 8,
+                            right: 8,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${controller.formatPrice(product.price)}',
+                                style: GoogleFonts.nunitoSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
                                   color: kBrandOrange,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  size: 15,
-                                  color: Colors.white,
                                 ),
                               ),
-                            ),
-                          ],
+                              GestureDetector(
+                                onTap: () {
+                                  final id = product.id;
+                                  if (id != null) {
+                                    final item = CartItem(
+                                      id: id,
+                                      name: product.name,
+                                      price: product.price,
+                                      quantity: 1,
+                                      cover: product.cover,
+                                    );
+                                    cart.addItem(item);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Đã thêm vào giỏ hàng!'),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: kBrandOrange,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

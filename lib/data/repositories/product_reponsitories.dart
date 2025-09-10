@@ -9,11 +9,9 @@ import 'package:getx_statemanagement/data/dio/dio.dart';
 import 'package:hive/hive.dart';
 
 class ProductRepository extends BaseRepository {
-  ProductRepository(dio);
-
   Future<List<Product>> getProductList(ProductListRequest request) async {
     try {
-      final response = await dio.get(
+      final response = await ApiClient().dio.get(
         ApiConfig.listProduct,
         queryParameters: request.toQueryParams(),
         options: Options(headers: {'Authorization': token}),
@@ -26,17 +24,15 @@ class ProductRepository extends BaseRepository {
     } on DioException catch (e) {
       print('DioException: ${e.response?.statusCode}');
       print('Response body: ${e.response?.data}');
-      rethrow;
+      return [];
     }
   }
 }
 
 class ProductDetailRepository extends BaseRepository {
-  ProductDetailRepository(dio);
-
   Future<Product> getProductDetail(int id) async {
     try {
-      final response = await dio.get(
+      final response = await ApiClient().dio.get(
         '${ApiConfig.productDetial}${id}',
         options: Options(headers: {'Authorization': token}),
       );
@@ -48,12 +44,12 @@ class ProductDetailRepository extends BaseRepository {
     } on DioException catch (e) {
       print('DioException: ${e.response?.statusCode}');
       print('Response body: ${e.response?.data}');
-      rethrow;
+      return Product(id: 0, name: '', price: 0, quantity: 0, cover: '');
     }
   }
 
   Future<bool> deleteProduct(int id) async {
-    final response = await dio.delete(
+    final response = await ApiClient().dio.delete(
       '${ApiConfig.productDelete}${id}',
       options: Options(headers: {'Authorization': token}),
     );
@@ -68,7 +64,7 @@ class ProductDetailRepository extends BaseRepository {
     required String cover,
   }) async {
     try {
-      final response = await dio.put(
+      final response = await ApiClient().dio.put(
         '${ApiConfig.productUpdate}${id}',
         data: {
           'name': name,
@@ -82,14 +78,11 @@ class ProductDetailRepository extends BaseRepository {
     } on DioException catch (e) {
       print('DioException: ${e.response?.statusCode}');
       print('Response body: ${e.response?.data}');
-      rethrow;
     }
   }
 }
 
 class CreateProductRepository extends BaseRepository {
-  CreateProductRepository(dio);
-
   Future<Product?> postCreateProdcut({
     required String name,
     required int price,
@@ -97,7 +90,7 @@ class CreateProductRepository extends BaseRepository {
     required String cover,
   }) async {
     try {
-      final response = await dio.post(
+      final response = await ApiClient().dio.post(
         '${ApiConfig.productCreate}',
         data: {
           'name': name,
@@ -111,7 +104,6 @@ class CreateProductRepository extends BaseRepository {
     } on DioException catch (e) {
       print('DioException: ${e.response?.statusCode}');
       print('Response body: ${e.response?.data}');
-      rethrow;
     }
   }
 }

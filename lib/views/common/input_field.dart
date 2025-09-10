@@ -10,6 +10,7 @@ class ModernInputField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode? focusNode;
   final TextInputType keyboardType;
+  final isboderRadius;
   final bool isPassword;
   final FormFieldValidator<String>? validator;
   final bool readOnly;
@@ -20,6 +21,7 @@ class ModernInputField extends StatefulWidget {
     required this.label,
     this.hintText,
     required this.controller,
+    this.isboderRadius = true,
     this.focusNode,
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
@@ -69,11 +71,23 @@ class _ModernInputFieldState extends State<ModernInputField> {
               vertical: 18,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius:
+                  widget.isboderRadius
+                      ? BorderRadius.circular(12)
+                      : BorderRadius.only(
+                        bottomLeft: Radius.circular(12),
+                        topLeft: Radius.circular(12),
+                      ),
               borderSide: BorderSide(color: kBrandOrange, width: 2),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius:
+                  widget.isboderRadius
+                      ? BorderRadius.circular(12)
+                      : BorderRadius.only(
+                        bottomLeft: Radius.circular(12),
+                        topLeft: Radius.circular(12),
+                      ),
               borderSide: BorderSide(color: Color(0xffEBECED), width: 2),
             ),
             border: OutlineInputBorder(
@@ -96,6 +110,7 @@ class ModernDropdownField<T> extends StatelessWidget {
   final String label;
   final List<T> items;
   final T? value;
+  final FocusNode? focusNode;
   final ValueChanged<T?> onChanged;
   final String Function(T) itemLabel;
 
@@ -103,6 +118,7 @@ class ModernDropdownField<T> extends StatelessWidget {
     super.key,
     required this.label,
     required this.items,
+    this.focusNode,
     required this.value,
     required this.onChanged,
     required this.itemLabel,
@@ -111,6 +127,12 @@ class ModernDropdownField<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    const borderRadius = BorderRadius.only(
+      bottomRight: Radius.circular(12),
+      topRight: Radius.circular(12),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,9 +147,25 @@ class ModernDropdownField<T> extends StatelessWidget {
         const SizedBox(height: 8),
         DropdownButtonFormField<T>(
           value: value,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 18,
+            ),
+            border: const OutlineInputBorder(borderRadius: borderRadius),
+            enabledBorder: const OutlineInputBorder(
+              borderRadius: borderRadius,
+              borderSide: BorderSide(color: Color(0xffEBECED), width: 2),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: borderRadius,
+              borderSide: BorderSide(color: kBrandOrange, width: 2),
+            ),
+            errorBorder: const OutlineInputBorder(
+              borderRadius: borderRadius,
+              borderSide: BorderSide(color: kBrandOrange2, width: 1),
+            ),
           ),
           items:
               items

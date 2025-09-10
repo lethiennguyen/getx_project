@@ -6,6 +6,7 @@ import 'package:getx_statemanagement/getx/controllers/detail_product_controller.
 import 'package:getx_statemanagement/views/product/update_product_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../base/asset/base_asset.dart';
 import '../../constans/shopping_cart/hive_shopping_cart.dart';
@@ -37,9 +38,12 @@ class FormProductInformation extends State<ProductInformation> {
       body: Obx(() {
         final product = controller.product.value;
         if (product == null) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: Text('Không tìm thấy sản phẩm'));
         }
-        return _bodyformProduct(product: product);
+        return Skeletonizer(
+          enabled: controller.isLoading.value,
+          child: _bodyformProduct(product: product),
+        );
       }),
       bottomNavigationBar: Obx(
         () => bottomNavigationBar(product: controller.product.value),
@@ -166,8 +170,8 @@ class FormProductInformation extends State<ProductInformation> {
             child: Text(
               product.name,
               style: GoogleFonts.roboto(
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
+                fontSize: 19,
+                fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
@@ -187,7 +191,7 @@ class FormProductInformation extends State<ProductInformation> {
                     Text(
                       'Số lượng :',
                       style: GoogleFonts.roboto(
-                        fontSize: 14,
+                        fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: Colors.black,
                       ),
@@ -196,7 +200,7 @@ class FormProductInformation extends State<ProductInformation> {
                     Text(
                       '${product.quantity}',
                       style: GoogleFonts.roboto(
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: textGray,
                       ),
