@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:getx_statemanagement/views/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../base/asset/base_asset.dart';
 import '../../enums/discount.dart';
 
 class ModernInputField extends StatefulWidget {
@@ -181,5 +183,127 @@ class ModernDropdownField<T> extends StatelessWidget {
         const SizedBox(height: 8),
       ],
     );
+  }
+}
+
+class AppInputField extends StatefulWidget {
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final TextInputType keyboardType;
+  final String? Function(String?)? validator;
+  final bool isPassword;
+  final String? errorText;
+  final VoidCallback? onChanged;
+
+  const AppInputField({
+    super.key,
+    required this.label,
+    required this.hint,
+    required this.controller,
+    required this.focusNode,
+    required this.keyboardType,
+    required this.validator,
+    this.isPassword = false,
+    this.errorText,
+    this.onChanged,
+  });
+
+  @override
+  State<AppInputField> createState() => _AppInputFieldState();
+}
+
+class _AppInputFieldState extends State<AppInputField> {
+  bool _isPasswordVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.label,
+          style: GoogleFonts.nunitoSans(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: const Color(0xff242E37),
+          ),
+        ),
+        TextFormField(
+          controller: widget.controller,
+          focusNode: widget.focusNode,
+          keyboardType: widget.keyboardType,
+          validator: widget.validator,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          obscureText: widget.isPassword ? !_isPasswordVisible : false,
+          onChanged: (val) {
+            widget.onChanged?.call();
+          },
+          cursorColor: const Color(0xffF24E1E),
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            contentPadding: const EdgeInsets.all(16),
+            errorStyle: const TextStyle(height: 0, fontSize: 0),
+            suffixIcon: _buildSuffixIcon(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Color(0xffF24E1E)),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Color(0xffF24E1E)),
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.only(right: 16),
+          height: 16,
+          alignment: Alignment.centerRight,
+          child: Text(
+            widget.errorText ?? '',
+            style: GoogleFonts.nunitoSans(
+              fontWeight: FontWeight.w400,
+              fontSize: 12,
+              color: const Color(0xffFF0000),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget? _buildSuffixIcon() {
+    if (widget.isPassword) {
+      return GestureDetector(
+        onTap: () {
+          _isPasswordVisible = !_isPasswordVisible;
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: SvgPicture.asset(
+            _isPasswordVisible ? IconsAssets.eye_slash : IconsAssets.eye,
+            width: 12,
+            height: 12,
+          ),
+        ),
+      );
+    } else if (widget.controller.text.isNotEmpty) {
+      return GestureDetector(
+        onTap: () {
+          widget.controller.clear();
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: SvgPicture.asset(IconsAssets.clear, width: 10, height: 10),
+        ),
+      );
+    }
+    return null;
   }
 }

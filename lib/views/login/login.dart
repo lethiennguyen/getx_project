@@ -10,6 +10,8 @@ import 'package:getx_statemanagement/views/common/size_box.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
+import '../common/input_field.dart';
+
 class MyHomeLogin extends StatefulWidget {
   @override
   State<MyHomeLogin> createState() => _MyHomeLoginState();
@@ -72,9 +74,44 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
                     : AutovalidateMode.disabled,
             child: Column(
               children: [
-                _buildInputField(field: LoginField.tax_code),
-                _buildInputField(field: LoginField.user_name),
-                _buildInputField(field: LoginField.password, isPassword: true),
+                AppInputField(
+                  label: LoginField.tax_code.lable,
+                  hint: LoginField.tax_code.hint,
+                  controller: controller.tax_code_controller,
+                  focusNode: controller.tax_code_focus,
+                  keyboardType: LoginField.tax_code.keyboardType,
+                  validator: LoginField.tax_code.validate,
+                  errorText: controller.errorTax_code.value,
+                  onChanged: () {
+                    controller.validateField(LoginField.tax_code);
+                  },
+                ),
+                AppInputField(
+                  label: LoginField.user_name.lable,
+                  hint: LoginField.user_name.hint,
+                  controller: controller.user_name_controller,
+                  focusNode: controller.user_name_focus,
+                  keyboardType: LoginField.user_name.keyboardType,
+                  validator: LoginField.user_name.validate,
+                  errorText: controller.errorUser_name.value,
+                  onChanged: () {
+                    controller.validateField(LoginField.user_name);
+                  },
+                ),
+                AppInputField(
+                  label: LoginField.password.lable,
+                  hint: LoginField.password.hint,
+                  controller: controller.password_controller,
+                  focusNode: controller.password_focus,
+                  keyboardType: LoginField.password.keyboardType,
+                  validator: LoginField.password.validate,
+                  isPassword: LoginField.password.isPassword,
+                  errorText: controller.errorPassword.value,
+                  onChanged: () {
+                    controller.validateField(LoginField.password);
+                  },
+                ),
+
                 SizedBox(height: 20),
                 _buttonLogin(),
               ],
@@ -142,117 +179,6 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
         ),
       ),
     );
-  }
-
-  Widget _buildInputField({
-    required LoginField field,
-    bool isPassword = false,
-  }) {
-    return Obx(() {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            field.lable,
-            style: GoogleFonts.nunitoSans(
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-              color: Color(0xff242E37),
-            ),
-          ),
-          TextFormField(
-            onChanged: (value) {
-              controller.validateField(field);
-              setState(() {});
-            },
-            validator: (value) {
-              final msg = field.validate(value);
-              return msg;
-            },
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            focusNode: controller.focusNodes[field],
-            keyboardType: field.keyboardType,
-            obscureText:
-                isPassword ? !controller.isPasswordVisible.value : false,
-            controller: controller.controllers[field],
-            cursorColor: Color(0xffF24E1E),
-            decoration: InputDecoration(
-              errorStyle: const TextStyle(
-                height: 0,
-                fontSize: 0,
-                color: Colors.transparent,
-              ),
-              errorText: null,
-              contentPadding: EdgeInsets.all(16),
-              hintText: field.hint,
-              suffixIcon:
-                  isPassword
-                      ? GestureDetector(
-                        onTap: () {
-                          controller.isPasswordVisible.toggle();
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: SvgPicture.asset(
-                            controller.isPasswordVisible.value
-                                ? IconsAssets.eye_slash
-                                : IconsAssets.eye,
-                            width: 12,
-                            height: 12,
-                          ),
-                        ),
-                      )
-                      : controller.controllers[field]!.text.isNotEmpty
-                      ? GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            controller.isClearing.value = true;
-                            controller.controllers[field]!.clear();
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: SvgPicture.asset(
-                            IconsAssets.clear,
-                            width: 10,
-                            height: 10,
-                          ),
-                        ),
-                      )
-                      : null,
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: kBrandOrange2),
-                borderRadius: BorderRadius.circular(6),
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(right: 16),
-            height: 16,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                controller.fieldErrors[field]!.value ?? '',
-                style: GoogleFonts.nunitoSans(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                  color: Color(0xffFF0000),
-                ),
-              ),
-            ),
-          ),
-          SizedBoxCustom.h4,
-        ],
-      );
-    });
   }
 
   void showDialogLogin(BuildContext context) {
