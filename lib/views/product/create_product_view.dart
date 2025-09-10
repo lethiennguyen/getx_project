@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getx_statemanagement/enums/discount.dart';
 import 'package:getx_statemanagement/getx/controllers/create_product_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -8,6 +9,7 @@ import '../../data/upload_image/upload_image_network.dart';
 import '../../enums/product_field.dart';
 import '../common/app_colors.dart';
 import '../common/input_field.dart';
+import '../common/size_box.dart';
 
 class CreateProduct extends StatelessWidget {
   final controller = Get.put(CreateProductController());
@@ -16,7 +18,7 @@ class CreateProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+      appBar: AppBar(backgroundColor: Colors.white),
       body: formAddProduct(controller.product.value),
       bottomNavigationBar: bottomNavigator(controller.product.value),
     );
@@ -28,7 +30,7 @@ class CreateProduct extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Form(
           key: controller.formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: controller.autovalidateMode.value,
           child: Column(
             children: [
               Obx(
@@ -51,14 +53,9 @@ class CreateProduct extends StatelessWidget {
                 validator: ProductField.name.validate,
                 keyboardType: TextInputType.text,
               ),
-              ModernInputField(
-                label: ProductField.price.lable,
-                hintText: ProductField.price.hint,
-                controller: controller.price,
-                focusNode: controller.priceFocus,
-                keyboardType: TextInputType.number,
-                validator: ProductField.price.validate,
-              ),
+
+              Obx(() => formPriceProduct(product)),
+
               ModernInputField(
                 label: ProductField.quantity.lable,
                 hintText: ProductField.quantity.hint,
@@ -74,27 +71,80 @@ class CreateProduct extends StatelessWidget {
     );
   }
 
+  Widget formPriceProduct(Product? product) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 2,
+              child: ModernInputField(
+                isboderRadius: false,
+                label: ProductField.price.lable,
+                hintText: ProductField.price.hint,
+                controller: controller.price,
+                focusNode: controller.priceFocus,
+                keyboardType: TextInputType.number,
+                validator: ProductField.price.validate,
+                onChanged: (value) {
+                  controller.calculateDiscount();
+                },
+              ),
+            ),
+            Flexible(
+              child: ModernDropdownField<Tax>(
+                label: 'Thuế',
+                items: Tax.values,
+                value: controller.selectedTax.value,
+                itemLabel: (d) => d.label,
+                focusNode: controller.priceFocus,
+                onChanged: (value) {
+                  if (value != null) {
+                    controller.selectedTax.value = value;
+                    controller.calculateDiscount();
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+        SizedBoxCustom.h16,
+        ModernInputField(
+          label: "Thành tiền",
+          controller: TextEditingController(
+            text: controller.totalPrice.value.toStringAsFixed(0),
+          ),
+          hintText: "0 đ",
+          readOnly: true,
+        ),
+        SizedBoxCustom.h16,
+      ],
+    );
+  }
+
   Widget bottomNavigator(Product? product) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ElevatedButton(
         onPressed: () async {
-          if (controller.product != null) {
-            final cuccess = await controller.createProduct(
-              name: controller.name,
-              priceCtrl: controller.price,
-              quantityCtrl: controller.price,
-              cover: controller.cover,
+          final cuccess = await controller.createProduct(
+            name: controller.name,
+            priceCtrl: TextEditingController(
+              text: controller.totalPrice.value.toStringAsFixed(0),
+            ),
+            quantityCtrl: controller.quantity,
+            cover: controller.cover,
+          );
+          if (cuccess) {
+            Get.offAllNamed('/home');
+          } else {
+            Get.snackbar(
+              'Thất bại',
+              'Không thể tạo sản phẩm',
+              snackPosition: SnackPosition.TOP,
             );
-            if (cuccess) {
-              Get.offAllNamed('/home');
-            } else {
-              Get.snackbar(
-                'Thất bại',
-                'Không thể tạo sản phẩm',
-                snackPosition: SnackPosition.TOP,
-              );
-            }
           }
         },
         style: ElevatedButton.styleFrom(

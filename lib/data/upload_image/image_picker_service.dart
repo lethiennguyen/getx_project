@@ -16,13 +16,13 @@ class ImagePickerService {
       final pickedFile = await _picker.pickImage(source: source);
       return pickedFile != null ? File(pickedFile.path) : null;
     } catch (e) {
-      throw Exception('Lỗi khi chọn ảnh: ${e.toString()}');
+      return null;
     }
   }
 
   Future<String?> uploadToCloudinary(File imageFile) async {
     try {
-      var request = http.MultipartRequest(
+      final request = http.MultipartRequest(
         'POST',
         Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload'),
       );
@@ -40,24 +40,19 @@ class ImagePickerService {
         contentType: MediaType('image', 'jpeg'),
       );
 
-      print('Before add, files: ${request.files.length}');
-      print('multipartFile: $multipartFile');
       request.files.add(multipartFile);
-      print('After add, files: ${request.files.length}');
 
       var response = await request.send();
-      print('Response status: ${response.statusCode}');
       var responseData = await response.stream.bytesToString();
-      print('Response body: $responseData');
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(responseData);
         return jsonResponse['secure_url'] as String;
       } else {
-        throw Exception('Upload failed with status: ${response.statusCode}');
+        return null;
       }
     } catch (e) {
-      throw Exception('Lỗi khi upload ảnh: ${e.toString()}');
+      return null;
     }
   }
 }

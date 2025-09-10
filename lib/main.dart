@@ -4,12 +4,14 @@ import 'package:getx_statemanagement/views/home/home_page.dart';
 import 'package:getx_statemanagement/views/login/login.dart';
 import 'package:getx_statemanagement/views/product/create_product_view.dart';
 import 'package:getx_statemanagement/views/product/detail_product_view.dart';
+import 'package:getx_statemanagement/views/shopping_cart/payment_view.dart';
 import 'package:getx_statemanagement/views/shopping_cart/shopping_cart_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 
 import 'constans/hive_constants.dart';
 import 'constans/shopping_cart/hive_shopping_cart.dart';
+import 'data/dio/dio.dart';
 import 'getx/controllers/app_controller.dart';
 import 'getx/controllers/shopping_cart_controller.dart';
 import 'getx/service/network_service.dart';
@@ -17,7 +19,6 @@ import 'getx/service/network_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-
   Hive.registerAdapter(CartItemAdapter());
   await Hive.openBox(HiveBoxNames.auth);
   await Hive.openBox<CartItem>(HiveBoxNames.cartbox);

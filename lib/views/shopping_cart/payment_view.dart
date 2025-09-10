@@ -7,21 +7,23 @@ import 'package:getx_statemanagement/views/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class PayMentView extends StatefulWidget{
+import '../common/size_box.dart';
+
+class PayMentView extends StatefulWidget {
   const PayMentView({Key? key}) : super(key: key);
 
   @override
   State<PayMentView> createState() => _PayMentViewState();
 }
+
 class _PayMentViewState extends State<PayMentView> {
   final cart = Get.find<CartController>();
   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Thanh toán"),
-      ),
+      appBar: AppBar(title: const Text("Thanh toán")),
       body: formPayment(),
     );
   }
@@ -30,46 +32,42 @@ class _PayMentViewState extends State<PayMentView> {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            formProduct()
-          ],
-        ),
+        child: Column(children: [formProduct()]),
       ),
     );
   }
 
-  Widget formProduct () {
+  Widget formProduct() {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             formPaymentItem(),
-            SizedBox(height: 10),
+            SizedBoxCustom.h10,
             bottomNavigator(),
-            SizedBox(height: 10),
+            SizedBoxCustom.h10,
           ],
         ),
       ),
     );
   }
 
-  Widget formPaymentItem(){
-    return  ListView.builder(
+  Widget formPaymentItem() {
+    return ListView.builder(
       itemCount: cart.selectedItems.length,
       itemBuilder: (context, index) {
         final item = cart.selectedItems[index];
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           child: itemProductShoppingCart(
-              productId: item.id,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              cover: item.cover,
-              context: context,
-              index: index
+            productId: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            cover: item.cover,
+            context: context,
+            index: index,
           ),
         );
       },
@@ -86,75 +84,75 @@ class _PayMentViewState extends State<PayMentView> {
     required int index,
   }) {
     return Container(
-        height: 120,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          children: [
-            SizedBox(width: 10),
-            Container(
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black26, width: 1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  '$cover',
-                  width: 80,
-                  height: 70,
-                  fit: BoxFit.cover,
-                ),
+      height: 120,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        children: [
+          SizedBoxCustom.h10,
+          Container(
+            padding: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black26, width: 1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                '$cover',
+                width: 80,
+                height: 70,
+                fit: BoxFit.cover,
               ),
             ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(10, 16, 0, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '$name',
-                      style: GoogleFonts.nunitoSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff6B6B6B),
-                      ),
+          ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(10, 16, 0, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '$name',
+                    style: GoogleFonts.nunitoSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff6B6B6B),
                     ),
-                    SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${currencyFormatter.format(price)}đ',
-                          style: GoogleFonts.nunitoSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: kBrandOrange,
-                          ),
+                  ),
+                  SizedBoxCustom.h8,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${currencyFormatter.format(price)}đ',
+                        style: GoogleFonts.nunitoSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: kBrandOrange,
                         ),
-                        Text(
-                          'X $quantity',
-                          style: GoogleFonts.nunitoSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff6B6B6B),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      Text(
+                        'X $quantity',
+                        style: GoogleFonts.nunitoSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff6B6B6B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
+          ),
 
-            SizedBox(width: 10),
-          ],
-        )
+          SizedBox(width: 10),
+        ],
+      ),
     );
   }
 
@@ -165,10 +163,7 @@ class _PayMentViewState extends State<PayMentView> {
         children: [
           Column(
             children: [
-              Text(
-                'Tồng tiền',
-                style: TextStyle(color: Colors.grey),
-              ),
+              Text('Tồng tiền', style: TextStyle(color: Colors.grey)),
               Text(
                 '1.000.000đ',
                 style: TextStyle(
@@ -180,21 +175,18 @@ class _PayMentViewState extends State<PayMentView> {
             ],
           ),
           ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Thanh toán thành công!')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kBrandOrange,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                textStyle: const TextStyle(fontSize: 16),
-              ),
-              child: Text(
-                'Thanh toán',
-                style: TextStyle(color: Colors.white),
-              )
-          )
+            onPressed: () {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Thanh toán thành công!')));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kBrandOrange,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              textStyle: const TextStyle(fontSize: 16),
+            ),
+            child: Text('Thanh toán', style: TextStyle(color: Colors.white)),
+          ),
         ],
       ),
     );
