@@ -148,7 +148,7 @@ class FormProductInformation extends State<ProductInformation> {
               color: Colors.white,
               border: Border.all(color: Color(0xffF3F3F3), width: 1),
             ),
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.3,
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
               child: Image.network(product.cover, fit: BoxFit.contain),

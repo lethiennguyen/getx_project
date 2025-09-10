@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/shopping_cart/hive_shopping_cart.dart';
 import 'package:getx_statemanagement/getx/controllers/list_poduct_controller.dart';
+import 'package:getx_statemanagement/views/common/size_box.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../base/asset/base_asset.dart';
@@ -138,9 +139,25 @@ class ProductListScreen extends State<ProductList> {
 
           SliverPadding(
             padding: const EdgeInsets.all(8),
-            sliver: SliverSkeletonizer(
-              enabled: controller.isLoading.value,
-              child: SliverGrid(
+            sliver: Obx(() {
+              if (controller.isLoading.value) {
+                return SliverSkeletonizer(
+                  enabled: true,
+                  child: SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => _buildProductSkeleton(),
+                      childCount: 6,
+                    ),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                      childAspectRatio: 3 / 4.5,
+                    ),
+                  ),
+                );
+              }
+              return SliverGrid(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) =>
                       ProductItem(product: controller.products[index]),
@@ -150,10 +167,10 @@ class ProductListScreen extends State<ProductList> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 5,
                   mainAxisSpacing: 5,
-                  childAspectRatio: 3 / 5,
+                  childAspectRatio: 3 / 4.5,
                 ),
-              ),
-            ),
+              );
+            }),
           ),
 
           if (controller.isLoadingMore.value)
@@ -207,115 +224,232 @@ class ProductListScreen extends State<ProductList> {
   Widget ProductItem({required Product product}) {
     return Padding(
       padding: const EdgeInsets.all(4),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.transparent,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.white,
+          child: InkWell(
+            splashColor: Colors.grey.withOpacity(0.2),
+            highlightColor: Colors.grey.withOpacity(0.1),
+
+            onTap: () async {
+              await Future.delayed(const Duration(milliseconds: 100));
+              final result = await Get.toNamed(
+                '/thongtinsanpham',
+                arguments: product.id,
+              );
+              if (result != null || result == 'deleted') {
+                controller.refreshPage();
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Color(0xffEBEBEB)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    height: 160,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Color(0xffEBEBEB), width: 1),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(product.cover, fit: BoxFit.contain),
+                    ),
+                  ),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBoxCustom.h2,
+                          Text(
+                            product.name,
+                            style: GoogleFonts.nunitoSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 16,
+                              top: 8,
+                              right: 8,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '${controller.formatPrice(product.price)}',
+                                  style: GoogleFonts.nunitoSans(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w900,
+                                    color: kBrandOrange,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    final id = product.id;
+                                    if (id != null) {
+                                      final item = CartItem(
+                                        id: id,
+                                        name: product.name,
+                                        price: product.price,
+                                        quantity: 1,
+                                        cover: product.cover,
+                                      );
+                                      cart.addItem(item);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Đã thêm vào giỏ hàng!',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: kBrandOrange,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.shopping_cart_outlined,
+                                      size: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductSkeleton() {
+    return Padding(
+      padding: const EdgeInsets.all(4),
       child: Material(
         color: Colors.white,
-        shadowColor: Color(0xffDBDBDB).withOpacity(0.4),
-        child: InkWell(
-          splashColor: Colors.grey.withOpacity(0.2),
-          highlightColor: Colors.grey.withOpacity(0.1),
-
-          onTap: () async {
-            await Future.delayed(const Duration(milliseconds: 100));
-            final result = await Get.toNamed(
-              '/thongtinsanpham',
-              arguments: product.id,
-            );
-            if (result != null || result == 'deleted') {
-              controller.refreshPage();
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: textGray),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Color(0xffEBEBEB)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Skeleton cho ảnh
+              Container(
+                height: 160,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Color(0xffEBEBEB), width: 1),
+                  ),
+                ),
+                child: Skeletonizer(
+                  enabled: true,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      product.cover,
-                      fit: BoxFit.cover,
-                      height: 160,
+                    child: Container(
+                      color: Colors.grey[300],
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
                   ),
                 ),
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          product.name,
-                          style: GoogleFonts.nunitoSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
+              ),
+              // Skeleton cho thông tin sản phẩm
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 8),
+                      Skeletonizer(
+                        enabled: true,
+                        child: Container(
+                          height: 16,
+                          width: double.infinity,
+                          color: Colors.grey[300],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: 16,
-                            top: 8,
-                            right: 8,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${controller.formatPrice(product.price)}',
-                                style: GoogleFonts.nunitoSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w900,
-                                  color: kBrandOrange,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 16,
+                          top: 8,
+                          right: 8,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Skeletonizer(
+                              enabled: true,
+                              child: Container(
+                                height: 14,
+                                width: 60,
+                                color: Colors.grey[300],
+                              ),
+                            ),
+                            Skeletonizer(
+                              enabled: true,
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.add,
+                                  size: 15,
+                                  color: Colors.transparent,
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  final id = product.id;
-                                  if (id != null) {
-                                    final item = CartItem(
-                                      id: id,
-                                      name: product.name,
-                                      price: product.price,
-                                      quantity: 1,
-                                      cover: product.cover,
-                                    );
-                                    cart.addItem(item);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Đã thêm vào giỏ hàng!'),
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: kBrandOrange,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 15,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

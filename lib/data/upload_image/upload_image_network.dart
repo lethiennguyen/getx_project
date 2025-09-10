@@ -76,7 +76,7 @@ class ImagePickerWidget extends StatelessWidget {
     if (hasSelectedImage) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Image.file(selectedImage!, fit: BoxFit.cover),
+        child: Image.file(selectedImage!, fit: BoxFit.contain),
       );
     } else if (hasValidUrl) {
       return ClipRRect(
@@ -84,7 +84,7 @@ class ImagePickerWidget extends StatelessWidget {
         child: Image.network(
           imageUrl!,
           key: ValueKey(imageUrl), // ép rebuild khi URL đổi
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           errorBuilder:
               (_, __, ___) => placeholder ?? _buildDefaultPlaceholder(),
         ),

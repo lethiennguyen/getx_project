@@ -58,7 +58,7 @@ class ListProductController extends GetxController {
       final request = ProductListRequest(page: page.value, size: size.value);
       final result = await listProduct.getProductList(request);
       products.value = result;
-    } on Exception catch (e) {
+    } catch (e) {
       print('Lỗi refresh: $e');
     } finally {
       await Future.delayed(const Duration(milliseconds: 1000));
@@ -84,10 +84,8 @@ class ListProductController extends GetxController {
     if (isLoadingMore.value) return;
     try {
       isLoadingMore.value = true;
-      final request = ProductListRequest(
-        page: page.value+ 1,
-        size: size.value,
-      );
+      page.value += 1;
+      final request = ProductListRequest(page: page.value, size: size.value);
       final result = await listProduct.getProductList(request);
       products.addAll(result);
     } catch (e) {

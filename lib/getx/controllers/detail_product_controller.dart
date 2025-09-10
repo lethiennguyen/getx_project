@@ -66,7 +66,8 @@ class DetailProductController extends GetxController {
       price.text = result.price.toString();
       quantity.text = result.quantity.toString();
       cover.text = result.cover;
-    } on Exception catch (e) {
+    } catch (e) {
+      print('Lỗi fetch chi tiết sản phẩm: $e');
     } finally {
       await Future.delayed(const Duration(milliseconds: 1000));
       isLoading.value = false;
@@ -79,14 +80,14 @@ class DetailProductController extends GetxController {
       Get.snackbar(
         'Thành công',
         'Đã xoá sản phẩm',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
       return true;
     } else {
       Get.snackbar(
         'Lỗi',
         'Đã xảy ra lỗi khi xoá sản phẩm',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
       return false;
     }

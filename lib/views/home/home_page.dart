@@ -79,7 +79,7 @@ class _LogoutPageState extends State<LogoutPage> {
                   ),
                 ],
               ),
-              child: Icon(Icons.add, color: Colors.black),
+              child: Icon(Icons.add, color: Colors.white),
             ),
           ),
         ),

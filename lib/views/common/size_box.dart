@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class SizedBoxCustom {
+  static const Widget h2 = SizedBox(height: 2);
   static const Widget h4 = SizedBox(height: 4);
   static const Widget h6 = SizedBox(height: 6);
   static const Widget h8 = SizedBox(height: 8);
