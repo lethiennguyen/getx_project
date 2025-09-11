@@ -4,7 +4,6 @@ import 'package:getx_statemanagement/getx/controllers/shopping_cart_controller.d
 import 'package:hive/hive.dart';
 
 import '../../constans/hive_constants.dart';
-import '../../data/dio/dio.dart';
 import '../../data/repositories/users_repositories.dart';
 
 class AppController extends GetxController {

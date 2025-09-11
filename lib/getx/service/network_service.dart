@@ -45,7 +45,6 @@ class NetworkService extends GetxService {
                 _dialogShown = false;
                 Get.back();
               },
-              child: const Text("Đóng"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -53,6 +52,7 @@ class NetworkService extends GetxService {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
+              child: const Text("Đóng"),
             ),
           ],
         ),

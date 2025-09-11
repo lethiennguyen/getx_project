@@ -86,6 +86,7 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
                     controller.validateField(LoginField.tax_code);
                   },
                 ),
+
                 AppInputField(
                   label: LoginField.user_name.lable,
                   hint: LoginField.user_name.hint,
@@ -98,6 +99,7 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
                     controller.validateField(LoginField.user_name);
                   },
                 ),
+
                 AppInputField(
                   label: LoginField.password.lable,
                   hint: LoginField.password.hint,
@@ -130,7 +132,9 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
         decoration: BoxDecoration(color: kBrandOrange),
         child: ElevatedButton(
           onPressed:
-              controller.isSubmitting.value ? null : () => controller.login(),
+              controller.isSubmitting.value
+                  ? null
+                  : () => controller.login(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: kBrandOrange,
             shape: RoundedRectangleBorder(

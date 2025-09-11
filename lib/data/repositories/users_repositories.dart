@@ -1,6 +1,3 @@
-import 'dart:developer' as dev;
-
-import 'package:dio/dio.dart';
 import 'package:getx_statemanagement/constans/hive_constants.dart';
 import 'package:getx_statemanagement/data/core/constants.dart';
 import 'package:getx_statemanagement/data/dio/dio.dart';
@@ -31,14 +28,9 @@ class AuthRepository {
       box.put(HiveKeys.user_name, users_name);
 
       return result;
-    } on DioException catch (e) {
-      //print('DioException: ${e.response?.statusCode}');
-      //print('Response body: ${e.response?.data}');
-      return LoginResponse(
-        success: false,
-        message: 'Lỗi kết nối: ${e.message}',
-        token: '',
-      );
+    } catch (e) {
+      print('Lỗi đăng nhập: $e');
+      return LoginResponse(success: false, message: 'Lỗi đăng nhập', token: '');
     }
   }
 }

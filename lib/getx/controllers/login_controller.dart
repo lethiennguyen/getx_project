@@ -1,10 +1,11 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/hive_constants.dart';
-import 'package:getx_statemanagement/data/dio/dio.dart';
 import 'package:getx_statemanagement/data/repositories/users_repositories.dart';
 import 'package:getx_statemanagement/enums/login_field.dart';
 import 'package:hive/hive.dart';
+
+import '../../views/common/dialog.dart';
 
 class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -70,7 +71,7 @@ class LoginController extends GetxController {
     return !hasError;
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
     submitted.value = true;
     isSubmitting.value = true;
     if (!_validateAllFields()) {
@@ -81,27 +82,32 @@ class LoginController extends GetxController {
       final tax_code = tax_code_controller;
       final uses_name = user_name_controller;
       final password = password_controller;
-      if (tax_code == null || uses_name == null || password == null) {
-        return;
-      }
       final result = await authRepository.postUserProviders(
         tax_code: int.parse(tax_code.text),
         users_name: uses_name.text,
         password: password.text,
       );
-      if (result != null) {
+      if (result.success) {
         final box = Hive.box(HiveBoxNames.auth);
         box.put('isLoggedIn', true);
-
         Get.offAllNamed('/home');
+      } else {
+        return showDialogLogin(context, 'Sai thông tin đăng nhập');
       }
-    }
-    /*catch (e) {
+    } catch (e) {
       print('Login error: $e');
-    }*/
-    finally {
+    } finally {
       isSubmitting.value = false;
     }
+  }
+
+  void showDialogLogin(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder:
+          (context) =>
+              CustomAlertDialog(title: 'Thông báo', message: '$message'),
+    );
   }
 
   // điền thông tin sa khi dăng nhập
@@ -109,9 +115,7 @@ class LoginController extends GetxController {
     final tax_code = tax_code_controller;
     final uses_name = user_name_controller;
     final password = password_controller;
-    if (tax_code == null || uses_name == null || password == null) {
-      return;
-    }
+
     final box = Hive.box(HiveBoxNames.auth);
     tax_code.text = box.get(HiveKeys.tax_code, defaultValue: '').toString();
     uses_name.text = box.get(HiveKeys.user_name, defaultValue: '');

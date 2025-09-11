@@ -6,24 +6,30 @@ extension ProductFieldExtentsion on ProductField {
   String? validate(String? value) {
     switch (this) {
       case ProductField.cover:
-        if (value == null || value.isEmpty)
+        if (value == null || value.isEmpty) {
           return "Ảnh sản phẩm không được để trống";
+        }
         return null;
       case ProductField.price:
         value = (value ?? '').trim();
-        if (value.length == 0) return "Giá không được để trống";
-        if (int.tryParse(value) == null || int.parse(value) <= 0)
+        if (value.isEmpty) return "Giá không được để trống";
+        if (int.tryParse(value) == null || int.parse(value) <= 0) {
           return "Giá phải là số dương";
+        }
         return null;
       case ProductField.quantity:
-        if (value == null || value.isEmpty)
+        if (value == null || value.isEmpty) {
           return "Số lượng không được để trống";
-        if (int.tryParse(value ?? '') == null || int.parse(value ?? '') <= 0)
+        }
+        if (int.tryParse(value) == null || int.parse(value) <= 0) {
           return "Số lượng phải là số dương";
+        }
         return null;
       case ProductField.name:
         value = (value ?? '').trim();
-        if (value.isEmpty) return "Tên sản phẩm không được để trống";
+        if (value.isEmpty) {
+          return "Tên sản phẩm không được để trống";
+        }
         return null;
     }
   }

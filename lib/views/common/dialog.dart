@@ -9,12 +9,12 @@ class CustomAlertDialog extends StatelessWidget {
   final VoidCallback? onConfirm;
 
   const CustomAlertDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     this.buttonText = 'OK',
     this.onConfirm,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,14 +67,15 @@ class CustomAlertDialogDeleteProduct extends StatelessWidget {
   final String? buttonText;
   final VoidCallback? onConfirm;
   final VoidCallback? onCancel;
+
   const CustomAlertDialogDeleteProduct({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     this.buttonText,
     this.onConfirm,
     this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

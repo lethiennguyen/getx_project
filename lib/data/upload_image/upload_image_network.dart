@@ -14,7 +14,7 @@ class ImagePickerWidget extends StatelessWidget {
   final VoidCallback onTap;
 
   const ImagePickerWidget({
-    Key? key,
+    super.key,
     this.selectedImage,
     this.imageUrl,
     this.isLoading = false,
@@ -24,7 +24,7 @@ class ImagePickerWidget extends StatelessWidget {
     this.height,
     this.placeholder,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

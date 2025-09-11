@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:getx_statemanagement/data/dio/dio.dart';
 import 'package:getx_statemanagement/data/model/product.dart';
 import 'package:getx_statemanagement/data/repositories/product_reponsitories.dart';
 import 'package:getx_statemanagement/data/request/product_request.dart';

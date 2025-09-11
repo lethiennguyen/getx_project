@@ -317,20 +317,18 @@ class FormProductInformation extends State<ProductInformation> {
     return Expanded(
       child: _customBottom(
         onTap: () async {
-          if (controller.product != null) {
-            final result = await Get.bottomSheet(
-              ShowPopUp.bottomSheet(context, controller),
-              isScrollControlled: true,
+          final result = await Get.bottomSheet(
+            ShowPopUp.bottomSheet(context, controller),
+            isScrollControlled: true,
+          );
+          if (result != null) {
+            controller.upDateProduct(
+              controller.product.value?.id,
+              name: result['name'],
+              price: int.parse(result['price']),
+              quantity: int.parse(result['quantity']),
+              coverUrl: result['cover'],
             );
-            if (result != null) {
-              controller.upDateProduct(
-                controller.product.value?.id,
-                name: result['name'],
-                price: int.parse(result['price']),
-                quantity: int.parse(result['quantity']),
-                coverUrl: result['cover'],
-              );
-            }
           }
         },
         icon: Icons.shopping_cart,
