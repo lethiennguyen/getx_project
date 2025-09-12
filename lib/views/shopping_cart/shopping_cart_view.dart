@@ -4,12 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../base/asset/base_asset.dart';
+import '../common/base_asset.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
 import '../common/size_box.dart';
 
 class ShoppingCart extends StatefulWidget {
+  const ShoppingCart({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return FromShoppingCart();
@@ -147,7 +149,7 @@ class FromShoppingCart extends State<ShoppingCart> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  '$cover',
+                  cover,
                   width: 80,
                   height: 70,
                   fit: BoxFit.cover,
@@ -162,7 +164,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '$name',
+                      name,
                       style: GoogleFonts.nunitoSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

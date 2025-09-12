@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../base/asset/base_asset.dart';
+import '../common/base_asset.dart';
 import '../../constans/shopping_cart/hive_shopping_cart.dart';
 import '../../data/model/product.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
@@ -148,7 +148,7 @@ class FormProductInformation extends State<ProductInformation> {
               color: Colors.white,
               border: Border.all(color: Color(0xffF3F3F3), width: 1),
             ),
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.3,
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
               child: Image.network(product.cover, fit: BoxFit.contain),
@@ -317,20 +317,18 @@ class FormProductInformation extends State<ProductInformation> {
     return Expanded(
       child: _customBottom(
         onTap: () async {
-          if (controller.product != null) {
-            final result = await Get.bottomSheet(
-              ShowPopUp.bottomSheet(context, controller),
-              isScrollControlled: true,
+          final result = await Get.bottomSheet(
+            ShowPopUp.bottomSheet(context, controller),
+            isScrollControlled: true,
+          );
+          if (result != null) {
+            controller.upDateProduct(
+              controller.product.value?.id,
+              name: result['name'],
+              price: int.parse(result['price']),
+              quantity: int.parse(result['quantity']),
+              coverUrl: result['cover'],
             );
-            if (result != null) {
-              controller.upDateProduct(
-                controller.product.value?.id,
-                name: result['name'],
-                price: int.parse(result['price']),
-                quantity: int.parse(result['quantity']),
-                coverUrl: result['cover'],
-              );
-            }
           }
         },
         icon: Icons.shopping_cart,

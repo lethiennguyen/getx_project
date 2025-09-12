@@ -1,15 +1,13 @@
-import 'dart:convert';
 import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerService {
   final ImagePicker _picker = ImagePicker();
   final String cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
   final String uploadPreset = dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '';
+  final Dio dio = Dio();
 
   Future<File?> pickImage(ImageSource source) async {
     try {
@@ -22,32 +20,20 @@ class ImagePickerService {
 
   Future<String?> uploadToCloudinary(File imageFile) async {
     try {
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload'),
+      final formData = FormData.fromMap({
+        'upload_preset': uploadPreset,
+        'file': await MultipartFile.fromFile(
+          imageFile.path,
+          filename: imageFile.path.split('/').last,
+        ),
+      });
+      final request = await dio.post(
+        'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
+        data: formData,
       );
 
-      request.fields['upload_preset'] = uploadPreset;
-
-      var fileStream = http.ByteStream(imageFile.openRead());
-      var length = await imageFile.length();
-
-      var multipartFile = http.MultipartFile(
-        'file',
-        fileStream,
-        length,
-        filename: imageFile.path.split('/').last,
-        contentType: MediaType('image', 'jpeg'),
-      );
-
-      request.files.add(multipartFile);
-
-      var response = await request.send();
-      var responseData = await response.stream.bytesToString();
-
-      if (response.statusCode == 200) {
-        var jsonResponse = jsonDecode(responseData);
-        return jsonResponse['secure_url'] as String;
+      if (request.statusCode == 200) {
+        return request.data['secure_url'];
       } else {
         return null;
       }

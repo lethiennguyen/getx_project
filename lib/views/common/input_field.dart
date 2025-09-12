@@ -3,8 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:getx_statemanagement/views/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../base/asset/base_asset.dart';
-import '../../enums/discount.dart';
+import 'base_asset.dart';
 
 class ModernInputField extends StatefulWidget {
   final String label;
@@ -48,7 +47,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
           style: GoogleFonts.nunitoSans(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: theme.colorScheme.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -143,7 +142,7 @@ class ModernDropdownField<T> extends StatelessWidget {
           style: GoogleFonts.nunitoSans(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: theme.colorScheme.onBackground,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),

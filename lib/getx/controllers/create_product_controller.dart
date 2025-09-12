@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../data/dio/dio.dart';
 import '../../data/model/product.dart';
 import '../../data/repositories/product_reponsitories.dart';
 import '../../data/upload_image/image_picker_service.dart';
@@ -80,12 +78,11 @@ class CreateProductController extends GetxController {
       final image = await imageService.pickImage(ImageSource.gallery);
       if (image == null) return;
       final url = await imageService.uploadToCloudinary(image);
-      print("url : $url");
       if (url != null) {
         cover.value = url;
       }
     } catch (e) {
-      print('Lỗi upload ảnh: $e');
+      // print('Lỗi upload ảnh: $e');
     }
   }
 }

@@ -4,8 +4,6 @@ import 'package:getx_statemanagement/data/model/product.dart';
 import 'package:getx_statemanagement/data/repositories/product_reponsitories.dart';
 import 'package:getx_statemanagement/data/upload_image/image_picker_service.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../data/dio/dio.dart';
 import '../../enums/discount.dart';
 
 class DetailProductController extends GetxController {
@@ -43,7 +41,7 @@ class DetailProductController extends GetxController {
 
     String baseName = name.text.split(" - Giảm").first.trim();
     if (discountPercent > 0) {
-      name.text = "$baseName - Giảm ${discountPercent}%";
+      name.text = "$baseName - Giảm $discountPercent%";
     } else {
       name.text = baseName;
     }
@@ -66,7 +64,8 @@ class DetailProductController extends GetxController {
       price.text = result.price.toString();
       quantity.text = result.quantity.toString();
       cover.text = result.cover;
-    } on Exception catch (e) {
+    } catch (e) {
+      //print('Lỗi fetch chi tiết sản phẩm: $e');
     } finally {
       await Future.delayed(const Duration(milliseconds: 1000));
       isLoading.value = false;
@@ -79,14 +78,14 @@ class DetailProductController extends GetxController {
       Get.snackbar(
         'Thành công',
         'Đã xoá sản phẩm',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
       return true;
     } else {
       Get.snackbar(
         'Lỗi',
         'Đã xảy ra lỗi khi xoá sản phẩm',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
       );
       return false;
     }
@@ -138,7 +137,6 @@ class DetailProductController extends GetxController {
       final image = await imageService.pickImage(ImageSource.gallery);
       if (image == null) return null;
       final url = await imageService.uploadToCloudinary(image);
-      print("url : $url");
       if (url != null && url.isNotEmpty) {
         imageUrl.value = url;
         cover.text = url;

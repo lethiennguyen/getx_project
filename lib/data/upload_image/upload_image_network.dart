@@ -14,7 +14,7 @@ class ImagePickerWidget extends StatelessWidget {
   final VoidCallback onTap;
 
   const ImagePickerWidget({
-    Key? key,
+    super.key,
     this.selectedImage,
     this.imageUrl,
     this.isLoading = false,
@@ -24,7 +24,7 @@ class ImagePickerWidget extends StatelessWidget {
     this.height,
     this.placeholder,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class ImagePickerWidget extends StatelessWidget {
     if (hasSelectedImage) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Image.file(selectedImage!, fit: BoxFit.cover),
+        child: Image.file(selectedImage!, fit: BoxFit.contain),
       );
     } else if (hasValidUrl) {
       return ClipRRect(
@@ -84,7 +84,7 @@ class ImagePickerWidget extends StatelessWidget {
         child: Image.network(
           imageUrl!,
           key: ValueKey(imageUrl), // ép rebuild khi URL đổi
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           errorBuilder:
               (_, __, ___) => placeholder ?? _buildDefaultPlaceholder(),
         ),

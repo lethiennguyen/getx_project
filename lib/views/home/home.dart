@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getx_statemanagement/constans/hive_constants.dart';
-import 'package:getx_statemanagement/views/common/input_field.dart';
 import 'package:hive/hive.dart';
-
-import '../../enums/discount.dart';
 
 class LogoutScreen extends StatelessWidget {
   const LogoutScreen({super.key});
