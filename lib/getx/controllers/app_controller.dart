@@ -4,7 +4,6 @@ import 'package:getx_statemanagement/getx/controllers/shopping_cart_controller.d
 import 'package:hive/hive.dart';
 
 import '../../constans/hive_constants.dart';
-import '../../data/dio/dio.dart';
 import '../../data/repositories/users_repositories.dart';
 
 class AppController extends GetxController {
@@ -19,7 +18,8 @@ class AppController extends GetxController {
   Future<void> _initApp() async {
     final authBox = await Hive.openBox(HiveBoxNames.auth);
     isLoggedIn.value = authBox.get('isLoggedIn', defaultValue: false) as bool;
-    final authRepo = AuthRepository(dio);
+    //final authRepo = AuthRepository(dio);
+    final authRepo = AuthRepository();
     await dotenv.load(fileName: '.env');
     Get.put<AuthRepository>(authRepo, permanent: true);
 

@@ -4,6 +4,7 @@ class Product {
   final int price;
   final int quantity;
   final String cover;
+
   const Product({
     required this.id,
     required this.name,
@@ -11,6 +12,7 @@ class Product {
     required this.quantity,
     required this.cover,
   });
+
   Map<String, dynamic> toJson() {
     return {
       'id': this.id,
@@ -22,7 +24,6 @@ class Product {
   }
 
   factory Product.fromJson(Map<String, dynamic> json) {
-    print('Dữ liệu vào fromJson: $json');
     return Product(
       id: json['id'],
       name: json['name'],

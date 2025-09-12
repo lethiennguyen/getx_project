@@ -16,8 +16,4 @@ class LoginResponse {
       token: json['data']['token'] as String,
     );
   }
-  @override
-  String toString() {
-    return 'LoginResponse(success: $success, message: $message, token: $token)';
-  }
 }

@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:getx_statemanagement/data/dio/dio.dart';
 import 'package:getx_statemanagement/data/model/product.dart';
 import 'package:getx_statemanagement/data/repositories/product_reponsitories.dart';
 import 'package:getx_statemanagement/data/request/product_request.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
-
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import '../../constans/hive_constants.dart';
 import '../../constans/shopping_cart/hive_shopping_cart.dart';
 
@@ -17,7 +16,8 @@ class ListProductController extends GetxController {
   final page = 1.obs;
   final size = 10.obs;
 
-  final listProduct = ProductRepository(dio);
+  //final listProduct = ProductRepository(dio);
+  final listProduct = ProductRepository();
 
   final scroll = ScrollController();
   var products = <Product>[].obs;
@@ -59,13 +59,16 @@ class ListProductController extends GetxController {
       products.value = result;
     } on Exception catch (e) {
       print('Lỗi refresh: $e');
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 1000));
+      isLoading.value = false;
     }
   }
 
   Future<void> refreshPage() async {
     try {
       isPullToRefresh.value = true;
-      page.value = 1;
+      page.value = 1; // luôn về trang 1 khi refresh
       final request = ProductListRequest(page: page.value, size: size.value);
       final result = await listProduct.getProductList(request);
       products.value = result;
@@ -73,6 +76,8 @@ class ListProductController extends GetxController {
       print('Lỗi refresh: $e');
     } finally {
       isPullToRefresh.value = false;
+      await Future.delayed(const Duration(milliseconds: 500));
+      isLoading.value = false;
     }
   }
 
@@ -80,7 +85,7 @@ class ListProductController extends GetxController {
     if (isLoadingMore.value) return;
     try {
       isLoadingMore.value = true;
-      ++page.value;
+      page.value += 1;
       final request = ProductListRequest(page: page.value, size: size.value);
       final result = await listProduct.getProductList(request);
       products.addAll(result);
@@ -90,6 +95,7 @@ class ListProductController extends GetxController {
       isLoadingMore.value = false;
     }
   }
+
   String formatPrice(num price) {
     String formatted = currencyFormatter.format(price);
 
@@ -101,3 +107,83 @@ class ListProductController extends GetxController {
     return '$formatted VNĐ';
   }
 }
+
+// class ListProductController extends GetxController {
+//   var isLoading = true.obs;
+//   var isLoadingMore = false.obs;
+//   var products = <Product>[].obs;
+//
+//   final page = 1.obs;
+//   final size = 10.obs;
+//   final listProduct = ProductRepository();
+//
+//   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
+//
+//   final RefreshController refreshController = RefreshController();
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     loadFirstPage();
+//   }
+//
+//   Future<void> loadFirstPage() async {
+//     try {
+//       isLoading.value = true;
+//       page.value = 1;
+//       final result = await listProduct.getProductList(
+//         ProductListRequest(page: page.value, size: size.value),
+//       );
+//       products.assignAll(result);
+//     } catch (e) {
+//       print('Lỗi loadFirstPage: $e');
+//     } finally {
+//       isLoading.value = false;
+//     }
+//   }
+//
+//   Future<void> refreshPage() async {
+//     try {
+//       page.value = 1;
+//       final result = await listProduct.getProductList(
+//         ProductListRequest(page: page.value, size: size.value),
+//       );
+//       products.assignAll(result);
+//       refreshController.refreshCompleted();
+//     } catch (e) {
+//       refreshController.refreshFailed();
+//     }
+//   }
+//
+//   Future<void> loadMorePage() async {
+//     if (isLoadingMore.value) return;
+//     try {
+//       isLoadingMore.value = true;
+//       page.value++;
+//       final result = await listProduct.getProductList(
+//         ProductListRequest(page: page.value, size: size.value),
+//       );
+//       if (result.isEmpty) {
+//         refreshController.loadNoData();
+//       } else {
+//         products.addAll(result);
+//         refreshController.loadComplete();
+//       }
+//     } catch (e) {
+//       refreshController.loadFailed();
+//     } finally {
+//       isLoadingMore.value = false;
+//     }
+//   }
+//
+//   String formatPrice(num price) {
+//     String formatted = currencyFormatter.format(price);
+//
+//     String onlyDigits = formatted.replaceAll(RegExp(r'\D'), '');
+//     if (onlyDigits.length > 9) {
+//       return '${formatted.substring(0, 9)}... VNĐ';
+//     }
+//
+//     return '$formatted VNĐ';
+//   }
+// }

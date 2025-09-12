@@ -4,11 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../base/asset/base_asset.dart';
+import '../common/base_asset.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
+import '../common/size_box.dart';
 
 class ShoppingCart extends StatefulWidget {
+  const ShoppingCart({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return FromShoppingCart();
@@ -18,6 +21,7 @@ class ShoppingCart extends StatefulWidget {
 class FromShoppingCart extends State<ShoppingCart> {
   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
   final cart = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +37,7 @@ class FromShoppingCart extends State<ShoppingCart> {
       leading: IconButton(
         onPressed: () {
           Get.delete<CartController>();
+
           Get.back();
         },
         icon: Icon(Icons.arrow_back_ios_new),
@@ -50,7 +55,12 @@ class FromShoppingCart extends State<ShoppingCart> {
         child: Container(color: Colors.black26, height: 0.5),
       ),
       actions: [
-        IconButton(onPressed: () {cart.removeSelected();}, icon: Image.asset(IconsAssets.trash_can)),
+        IconButton(
+          onPressed: () {
+            cart.removeSelected();
+          },
+          icon: Image.asset(IconsAssets.trash_can),
+        ),
         SizedBox(width: 8),
       ],
     );
@@ -78,7 +88,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                 cart.removeById(item.id);
               },
               context: context,
-              index: index
+              index: index,
             ),
           );
         },
@@ -119,11 +129,11 @@ class FromShoppingCart extends State<ShoppingCart> {
         ),
         child: Row(
           children: [
-            SizedBox(width: 10),
+            SizedBoxCustom.h10,
             Obx(
-              ()=> Checkbox(
+              () => Checkbox(
                 value: cart.checked[index],
-                onChanged: (v) => cart.select(index,v ??false ),
+                onChanged: (v) => cart.select(index, v ?? false),
                 activeColor: kBrandOrange,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -139,7 +149,7 @@ class FromShoppingCart extends State<ShoppingCart> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  '$cover',
+                  cover,
                   width: 80,
                   height: 70,
                   fit: BoxFit.cover,
@@ -154,14 +164,14 @@ class FromShoppingCart extends State<ShoppingCart> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '$name',
+                      name,
                       style: GoogleFonts.nunitoSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Color(0xff6B6B6B),
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBoxCustom.h8,
                     Text(
                       '${currencyFormatter.format(price)}đ',
                       style: GoogleFonts.nunitoSans(
@@ -174,8 +184,8 @@ class FromShoppingCart extends State<ShoppingCart> {
                 ),
               ),
             ),
-            increaseOrDecreaseSalary(index,quantity),
-            SizedBox(width: 10),
+            increaseOrDecreaseSalary(index, quantity),
+            SizedBoxCustom.h10,
           ],
         ),
       ),
@@ -198,7 +208,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                 color: textColorGray,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBoxCustom.h8,
             Container(
               height: 25,
               decoration: BoxDecoration(
@@ -238,13 +248,13 @@ class FromShoppingCart extends State<ShoppingCart> {
                       ),
                     ),
                     child: Center(
-                      child:  Text(
-                            '$quantity',
-                            style: GoogleFonts.nunitoSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: textColorGray,
-                            ),
+                      child: Text(
+                        '$quantity',
+                        style: GoogleFonts.nunitoSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: textColorGray,
+                        ),
                       ),
                     ),
                   ),
@@ -289,12 +299,12 @@ class FromShoppingCart extends State<ShoppingCart> {
             flex: 2,
             child: Row(
               children: [
-                 Transform.scale(
+                Transform.scale(
                   scale: 1.2,
                   child: Obx(
-                    ()=> Checkbox(
-                      value:cart.checkAll.value,
-                      onChanged:(value){
+                    () => Checkbox(
+                      value: cart.checkAll.value,
+                      onChanged: (value) {
                         cart.selectAll(value ?? false);
                       },
                       activeColor: kBrandOrange,
@@ -304,7 +314,7 @@ class FromShoppingCart extends State<ShoppingCart> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 4),
+                SizedBoxCustom.w4,
                 Text(
                   "Tất cả",
                   style: GoogleFonts.nunitoSans(
@@ -351,7 +361,17 @@ class FromShoppingCart extends State<ShoppingCart> {
             flex: 2,
             child: GestureDetector(
               onTap: () {
-                // Handle buy action
+                // if (cart.sumItem.value > 0) {
+                //   Get.toNamed('/payment');
+                // } else {
+                //   Get.snackbar(
+                //     'Thông báo',
+                //     'Giỏ hàng của bạn đang trống',
+                //     snackPosition: SnackPosition.TOP,
+                //     backgroundColor: Colors.red.withOpacity(0.8),
+                //     colorText: Colors.white,
+                //   );
+                // }
               },
               child: Container(
                 height: 48,

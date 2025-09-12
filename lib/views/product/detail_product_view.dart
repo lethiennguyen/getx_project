@@ -6,13 +6,15 @@ import 'package:getx_statemanagement/getx/controllers/detail_product_controller.
 import 'package:getx_statemanagement/views/product/update_product_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../base/asset/base_asset.dart';
+import '../common/base_asset.dart';
 import '../../constans/shopping_cart/hive_shopping_cart.dart';
 import '../../data/model/product.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
 import '../common/dialog.dart';
+import '../common/size_box.dart';
 
 class ProductInformation extends StatefulWidget {
   const ProductInformation({super.key});
@@ -27,6 +29,7 @@ class FormProductInformation extends State<ProductInformation> {
   final currencyFormatter = NumberFormat('#,##0', 'vi_VN');
   final controller = Get.put(DetailProductController());
   final cart = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,9 +38,12 @@ class FormProductInformation extends State<ProductInformation> {
       body: Obx(() {
         final product = controller.product.value;
         if (product == null) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: Text('Không tìm thấy sản phẩm'));
         }
-        return _bodyformProduct(product: product);
+        return Skeletonizer(
+          enabled: controller.isLoading.value,
+          child: _bodyformProduct(product: product),
+        );
       }),
       bottomNavigationBar: Obx(
         () => bottomNavigationBar(product: controller.product.value),
@@ -67,6 +73,7 @@ class FormProductInformation extends State<ProductInformation> {
               IconButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
+
                   Get.toNamed('/shopping_cart');
                 },
                 icon: Container(
@@ -84,35 +91,41 @@ class FormProductInformation extends State<ProductInformation> {
                 tooltip: 'Giỏ hàng',
               ),
               // Cart badge
-              Obx(() => cart.items.isNotEmpty ?
-              Positioned(
-                right: 6,
-                top: 6,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: kBrandOrange,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: kBrandOrange.withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  constraints: BoxConstraints(minWidth: 16, minHeight: 16),
-                  child: Text(
-                    '${cart.items.length}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ) : SizedBox.shrink(),
+              Obx(
+                () =>
+                    cart.items.isNotEmpty
+                        ? Positioned(
+                          right: 6,
+                          top: 6,
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: kBrandOrange,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kBrandOrange.withOpacity(0.3),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '${cart.items.length}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        )
+                        : SizedBox.shrink(),
               ),
             ],
           ),
@@ -135,7 +148,7 @@ class FormProductInformation extends State<ProductInformation> {
               color: Colors.white,
               border: Border.all(color: Color(0xffF3F3F3), width: 1),
             ),
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.3,
             child: ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
               child: Image.network(product.cover, fit: BoxFit.contain),
@@ -157,8 +170,8 @@ class FormProductInformation extends State<ProductInformation> {
             child: Text(
               product.name,
               style: GoogleFonts.roboto(
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
+                fontSize: 19,
+                fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
             ),
@@ -178,7 +191,7 @@ class FormProductInformation extends State<ProductInformation> {
                     Text(
                       'Số lượng :',
                       style: GoogleFonts.roboto(
-                        fontSize: 14,
+                        fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: Colors.black,
                       ),
@@ -187,7 +200,7 @@ class FormProductInformation extends State<ProductInformation> {
                     Text(
                       '${product.quantity}',
                       style: GoogleFonts.roboto(
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: textGray,
                       ),
@@ -225,9 +238,9 @@ class FormProductInformation extends State<ProductInformation> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _bottomCartShopping(product),
-          SizedBox(width: 3),
+          SizedBoxCustom.w3,
           _bottomDelete(product),
-          SizedBox(width: 3),
+          SizedBoxCustom.w3,
           _bottomUpDate(product),
         ],
       ),
@@ -284,7 +297,9 @@ class FormProductInformation extends State<ProductInformation> {
             final result = await showDialogProductDelete();
             if (result == true) {
               final resultDelete = await controller.deleteProduct(product.id);
-              await cart.removeById(product.id);
+              if (await cart.isItemInCart(product.id)) {
+                await cart.removeById(product.id);
+              }
               if (resultDelete == true) {
                 await Future.delayed(Duration(milliseconds: 100));
                 Get.offAllNamed('/home');
@@ -302,11 +317,11 @@ class FormProductInformation extends State<ProductInformation> {
     return Expanded(
       child: _customBottom(
         onTap: () async {
-          if (controller.product != null) {
-            final result = await Get.bottomSheet(
-              ShowPopUp.bottomSheet(context, controller),
-              isScrollControlled: true,
-            );
+          final result = await Get.bottomSheet(
+            ShowPopUp.bottomSheet(context, controller),
+            isScrollControlled: true,
+          );
+          if (result != null) {
             controller.upDateProduct(
               controller.product.value?.id,
               name: result['name'],

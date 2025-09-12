@@ -4,6 +4,7 @@ import 'package:getx_statemanagement/views/home/home.dart';
 import 'package:getx_statemanagement/views/product/list_product_view.dart';
 
 import '../common/app_colors.dart';
+import '../common/size_box.dart';
 
 class LogoutPage extends StatefulWidget {
   const LogoutPage({Key? key}) : super(key: key);
@@ -78,7 +79,7 @@ class _LogoutPageState extends State<LogoutPage> {
                   ),
                 ],
               ),
-              child: Icon(Icons.add, color: Colors.black),
+              child: Icon(Icons.add, color: Colors.white),
             ),
           ),
         ),
@@ -116,7 +117,7 @@ class _NavButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBoxCustom.h6,
             // Icon
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
@@ -140,6 +141,7 @@ enum NavItem {
   profile(Icons.person_outline, '/profile');
 
   const NavItem(this.iconData, this.route);
+
   final IconData iconData;
   final String route;
 

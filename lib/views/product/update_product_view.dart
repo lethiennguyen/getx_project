@@ -4,7 +4,10 @@ import 'package:getx_statemanagement/getx/controllers/detail_product_controller.
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/upload_image/upload_image_network.dart';
+import '../../enums/discount.dart';
+import '../../enums/product_field.dart';
 import '../common/input_field.dart';
+import '../common/size_box.dart';
 
 class ShowPopUp {
   static Widget bottomSheet(
@@ -15,7 +18,7 @@ class ShowPopUp {
       onClosing: () {},
       builder: (context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: MediaQuery.of(context).size.height * 0.9,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(color: Colors.white),
           child: SingleChildScrollView(
@@ -54,35 +57,31 @@ class ShowPopUp {
       child: Column(
         children: [
           _imagePicker(controller),
-          const SizedBox(height: 16),
+          SizedBoxCustom.h16,
           ModernInputField(
-            label: 'Sản phẩm',
-            hintText: 'Nhập tên sản phẩm',
+            label: ProductField.name.lable,
+            hintText: ProductField.name.hint,
             controller: controller.name,
-            focusNode: FocusNode(),
+            focusNode: controller.nameFocus,
+            validator: ProductField.name.validate,
             keyboardType: TextInputType.text,
           ),
+          Obx(() => _formPriceProduct(controller)),
           ModernInputField(
-            label: 'Giá',
-            hintText: 'Nhập giá sản phẩm',
-            controller: controller.price,
-            focusNode: FocusNode(),
-            keyboardType: TextInputType.number,
-          ),
-          ModernInputField(
-            label: 'Số lượng',
-            hintText: 'Nhập số lượng',
+            label: ProductField.quantity.lable,
+            hintText: ProductField.quantity.hint,
+            validator: ProductField.quantity.validate,
             controller: controller.quantity,
-            focusNode: FocusNode(),
+            focusNode: controller.quantityFocus,
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 80),
+          SizedBoxCustom.h80,
           ElevatedButton(
             onPressed: () {
               Get.back(
                 result: {
                   'name': controller.name.text,
-                  'price': controller.price.text,
+                  'price': controller.totalPrice.value.toStringAsFixed(0),
                   'quantity': controller.quantity.text,
                   'cover': controller.cover.text ?? controller.imageUrl,
                 },
@@ -105,6 +104,61 @@ class ShowPopUp {
           ),
         ],
       ),
+    );
+  }
+
+  static Widget _formPriceProduct(DetailProductController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 2,
+              child: ModernInputField(
+                isboderRadius: false,
+                label: ProductField.price.lable,
+                hintText: ProductField.price.hint,
+                controller: controller.price,
+                focusNode: controller.priceFocus,
+                keyboardType: TextInputType.number,
+                validator: ProductField.price.validate,
+                onChanged: (value) {
+                  controller.calculateDiscount();
+                },
+              ),
+            ),
+            SizedBoxCustom.h12,
+            Expanded(
+              flex: 1,
+              child: ModernDropdownField<Discount>(
+                label: 'Giảm giá',
+                items: Discount.values,
+                value: controller.selectedDiscount.value,
+                itemLabel: (d) => d.label,
+                focusNode: controller.priceFocus,
+                onChanged: (value) {
+                  if (value != null) {
+                    controller.selectedDiscount.value = value;
+                    controller.calculateDiscount();
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+        SizedBoxCustom.h8,
+        ModernInputField(
+          label: "Thành tiền",
+          controller: TextEditingController(
+            text: controller.totalPrice.value.toStringAsFixed(0),
+          ),
+          hintText: "0 đ",
+          readOnly: true,
+        ),
+        SizedBoxCustom.h16,
+      ],
     );
   }
 }

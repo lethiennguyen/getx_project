@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../data/dio/dio.dart';
 import '../../data/model/product.dart';
 import '../../data/repositories/product_reponsitories.dart';
 import '../../data/upload_image/image_picker_service.dart';
+import '../../enums/discount.dart';
 
 class CreateProductController extends GetxController {
   final name = TextEditingController();
@@ -16,7 +15,8 @@ class CreateProductController extends GetxController {
   final FocusNode quantityFocus = FocusNode();
   final cover = ''.obs;
 
-  final respon = CreateProductRepository(dio);
+  //final respon = CreateProductRepository(dio);
+  final respon = CreateProductRepository();
   final imageService = ImagePickerService();
   var product = Rx<Product?>(null);
 
@@ -26,6 +26,18 @@ class CreateProductController extends GetxController {
   final autovalidateMode = AutovalidateMode.disabled.obs;
   var isUploading = false.obs;
 
+  var selectedTax = Tax.none.obs;
+
+  // Lấy danh sách discount từ enum
+  List<Tax> get discounts => Tax.values;
+  final totalPrice = 0.0.obs;
+
+  void calculateDiscount() {
+    final double basePrice = double.tryParse(price.text) ?? 0.0;
+    final taxPercent = selectedTax.value.value; // % từ enum
+    totalPrice.value = basePrice * (1 + taxPercent / 100);
+  }
+
   Future<bool> createProduct({
     required TextEditingController name,
     required TextEditingController priceCtrl,
@@ -33,17 +45,6 @@ class CreateProductController extends GetxController {
     required RxString cover,
   }) async {
     autovalidateMode.value = AutovalidateMode.always;
-
-    final isValid = formKey.currentState?.validate() ?? false;
-    final hasCover = cover.value.isNotEmpty;
-    if (!isValid || !hasCover) {
-      if (!hasCover) {
-        Get.snackbar('Lỗi', 'Vui lòng chọn ảnh sản phẩm',
-            snackPosition: SnackPosition.TOP);
-      }
-      return false;
-    }
-
     isSubmitting.value = true;
     try {
       final result = await respon.postCreateProdcut(
@@ -71,19 +72,17 @@ class CreateProductController extends GetxController {
     name.dispose();
     super.onClose();
   }
+
   Future<void> pickAndUploadImage() async {
     try {
       final image = await imageService.pickImage(ImageSource.gallery);
       if (image == null) return;
       final url = await imageService.uploadToCloudinary(image);
-      print("url : $url");
       if (url != null) {
         cover.value = url;
-      } else {
-        return;
       }
     } catch (e) {
-      rethrow;
+      // print('Lỗi upload ảnh: $e');
     }
   }
 }
