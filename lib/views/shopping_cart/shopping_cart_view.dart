@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../base/asset/base_asset.dart';
+import '../common/base_asset.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
 import '../common/app_colors.dart';
 import '../common/size_box.dart';

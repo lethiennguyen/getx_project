@@ -6,8 +6,10 @@ import 'package:getx_statemanagement/constans/shopping_cart/hive_shopping_cart.d
 import 'package:getx_statemanagement/getx/controllers/list_poduct_controller.dart';
 import 'package:getx_statemanagement/views/common/size_box.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+//import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import '../../base/asset/base_asset.dart';
+import '../common/base_asset.dart';
 import '../../data/model/product.dart';
 import '../../enums/product_type.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';
@@ -32,7 +34,7 @@ class ProductListScreen extends State<ProductList> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar(),
-      body: Obx(() => _formProductList(controller.products)),
+      body: _formProductList(controller.products),
     );
   }
 
@@ -65,7 +67,6 @@ class ProductListScreen extends State<ProductList> {
                 ),
                 tooltip: 'Giỏ hàng',
               ),
-              // Cart badge
               Obx(
                 () =>
                     cart.items.isNotEmpty
@@ -116,37 +117,93 @@ class ProductListScreen extends State<ProductList> {
   Widget _formProductList(List<Product> products) {
     return RefreshIndicator(
       onRefresh: () async => controller.refreshPage(),
-      child: CustomScrollView(
-        controller: controller.scroll,
-        slivers: [
-          SliverToBoxAdapter(child: SizedBox(height: 10)),
-
-          SliverToBoxAdapter(child: typeProduct()),
-
-          if (controller.isPullToRefresh.value)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Center(
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+      child: Obx(
+        () => CustomScrollView(
+          controller: controller.scroll,
+          slivers: [
+            SliverToBoxAdapter(child: SizedBox(height: 10)),
+            SliverToBoxAdapter(child: typeProduct()),
+            if (controller.isPullToRefresh.value)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-          SliverPadding(
-            padding: const EdgeInsets.all(8),
-            sliver: Obx(() {
-              if (controller.isLoading.value) {
-                return SliverSkeletonizer(
-                  enabled: true,
-                  child: SliverGrid(
+            SliverPadding(
+              padding: const EdgeInsets.all(8),
+              sliver: Obx(() {
+                if (controller.isLoading.value) {
+                  return SliverSkeletonizer(
+                    enabled: true,
+                    child: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => _buildProductSkeleton(),
+                        childCount: 6,
+                      ),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                        childAspectRatio: 3 / 4.5,
+                      ),
+                    ),
+                  );
+                }
+                // No Data sẽ hiện khi load xong mà k có data
+                if (controller.products.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 80,
+                              color: kBrandOrange,
+                            ),
+                            Text(
+                              'Không có sản phẩm nào',
+                              style: GoogleFonts.nunitoSans(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            SizedBoxCustom.h16,
+                            ElevatedButton(
+                              onPressed: controller.refreshPage,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kBrandOrange,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                              child: Text(
+                                'Tải lại',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  // loafd sản phẩm khi có data
+                  return SliverGrid(
                     delegate: SliverChildBuilderDelegate(
-                      (context, index) => _buildProductSkeleton(),
-                      childCount: 6,
+                      (context, index) =>
+                          ProductItem(product: controller.products[index]),
+                      childCount: controller.products.length,
                     ),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -154,42 +211,79 @@ class ProductListScreen extends State<ProductList> {
                       mainAxisSpacing: 5,
                       childAspectRatio: 3 / 4.5,
                     ),
-                  ),
-                );
-              }
-              return SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) =>
-                      ProductItem(product: controller.products[index]),
-                  childCount: controller.products.length,
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 3 / 4.5,
-                ),
-              );
-            }),
-          ),
+                  );
+                }
+              }),
+            ),
 
-          if (controller.isLoadingMore.value)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Center(
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+            if (controller.isLoadingMore.value)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+  // TODO:sử dụng pull_to_refresh_flutterv3
+  // Widget _formProductList(List<Product> product) {
+  //   return SmartRefresher(
+  //     controller: controller.refreshController,
+  //     enablePullDown: true,
+  //     enablePullUp: true,
+  //     header: const WaterDropHeader(),
+  //     onRefresh: controller.refreshPage,
+  //     onLoading: controller.loadMorePage,
+  //     child: CustomScrollView(
+  //       slivers: [
+  //         SliverToBoxAdapter(child: SizedBox(height: 10)),
+  //         SliverToBoxAdapter(child: typeProduct()),
+  //         SliverPadding(
+  //           padding: const EdgeInsets.all(8),
+  //           sliver: Obx(() {
+  //             if (controller.isLoading.value) {
+  //               return SliverGrid(
+  //                 delegate: SliverChildBuilderDelegate(
+  //                   (context, index) => _buildProductSkeleton(),
+  //                   childCount: 6,
+  //                 ),
+  //                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //                   crossAxisCount: 2,
+  //                   crossAxisSpacing: 5,
+  //                   mainAxisSpacing: 5,
+  //                   childAspectRatio: 3 / 4.5,
+  //                 ),
+  //               );
+  //             }
+  //             return SliverGrid(
+  //               delegate: SliverChildBuilderDelegate(
+  //                 (context, index) =>
+  //                     ProductItem(product: controller.products[index]),
+  //                 childCount: controller.products.length,
+  //               ),
+  //               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //                 crossAxisCount: 2,
+  //                 crossAxisSpacing: 5,
+  //                 mainAxisSpacing: 5,
+  //                 childAspectRatio: 3 / 4.5,
+  //               ),
+  //             );
+  //           }),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget typeProduct() {
     return SizedBox(
@@ -372,7 +466,6 @@ class ProductListScreen extends State<ProductList> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Skeleton cho ảnh
               Container(
                 height: 160,
                 padding: const EdgeInsets.all(8),
@@ -393,7 +486,6 @@ class ProductListScreen extends State<ProductList> {
                   ),
                 ),
               ),
-              // Skeleton cho thông tin sản phẩm
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),

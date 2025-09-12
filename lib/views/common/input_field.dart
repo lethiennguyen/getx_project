@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:getx_statemanagement/views/common/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../base/asset/base_asset.dart';
+import 'base_asset.dart';
 
 class ModernInputField extends StatefulWidget {
   final String label;

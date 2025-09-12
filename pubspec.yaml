@@ -49,6 +49,7 @@ dependencies:
   get: 4.7.2
   shimmer: ^3.0.0
   skeletonizer: ^2.1.0
+  pull_to_refresh_flutter3: ^2.0.2
   internet_connection_checker: ^1.0.0+1 # kiem tra ket noi internet
 dev_dependencies:
   flutter_test:

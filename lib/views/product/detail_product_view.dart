@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import '../../base/asset/base_asset.dart';
+import '../common/base_asset.dart';
 import '../../constans/shopping_cart/hive_shopping_cart.dart';
 import '../../data/model/product.dart';
 import '../../getx/controllers/shopping_cart_controller.dart';

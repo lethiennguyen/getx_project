@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:getx_statemanagement/base/asset/base_asset.dart';
+import 'package:getx_statemanagement/views/common/base_asset.dart';
 import 'package:getx_statemanagement/enums/login_field.dart';
 import 'package:getx_statemanagement/getx/controllers/login_controller.dart';
 import 'package:getx_statemanagement/views/common/app_colors.dart';
@@ -25,7 +25,7 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Obx(
-        () => SingleChildScrollView(child: SafeArea(child: _formLogin())),
+            () => SingleChildScrollView(child: SafeArea(child: _formLogin())),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
@@ -69,9 +69,9 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
           child: Form(
             key: controller.formKey,
             autovalidateMode:
-                controller.submitted.value
-                    ? AutovalidateMode.always
-                    : AutovalidateMode.disabled,
+            controller.submitted.value
+                ? AutovalidateMode.always
+                : AutovalidateMode.disabled,
             child: Column(
               children: [
                 AppInputField(
@@ -132,9 +132,9 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
         decoration: BoxDecoration(color: kBrandOrange),
         child: ElevatedButton(
           onPressed:
-              controller.isSubmitting.value
-                  ? null
-                  : () => controller.login(context),
+          controller.isSubmitting.value
+              ? null
+              : () => controller.login(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: kBrandOrange,
             shape: RoundedRectangleBorder(
@@ -142,16 +142,16 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
             ),
           ),
           child:
-              controller.isSubmitting.value
-                  ? Lottie.asset(Lotteri.loading, width: 50, height: 50)
-                  : Text(
-                    'Đăng nhập',
-                    style: GoogleFonts.nunitoSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+          controller.isSubmitting.value
+              ? Lottie.asset(Lotteri.loading, width: 50, height: 50)
+              : Text(
+            'Đăng nhập',
+            style: GoogleFonts.nunitoSans(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
         ),
       );
     });
@@ -189,10 +189,11 @@ class _MyHomeLoginState extends State<MyHomeLogin> {
     showDialog(
       context: context,
       builder:
-          (context) => const CustomAlertDialog(
-            title: 'Thông báo',
-            message: 'Thông tin đăng nhập không hợp lệ',
-          ),
+          (context) =>
+      const CustomAlertDialog(
+        title: 'Thông báo',
+        message: 'Thông tin đăng nhập không hợp lệ',
+      ),
     );
   }
 }
