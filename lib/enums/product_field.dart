@@ -1,8 +1,39 @@
 import 'package:flutter/cupertino.dart';
 
-enum ProductField { name, price, quantity , cover }
+enum ProductField { name, price, quantity, cover }
 
 extension ProductFieldExtentsion on ProductField {
+  String? validate(String? value) {
+    switch (this) {
+      case ProductField.cover:
+        if (value == null || value.isEmpty) {
+          return "Ảnh sản phẩm không được để trống";
+        }
+        return null;
+      case ProductField.price:
+        value = (value ?? '').trim();
+        if (value.isEmpty) return "Giá không được để trống";
+        if (int.tryParse(value) == null || int.parse(value) <= 0) {
+          return "Giá phải là số dương";
+        }
+        return null;
+      case ProductField.quantity:
+        if (value == null || value.isEmpty) {
+          return "Số lượng không được để trống";
+        }
+        if (int.tryParse(value) == null || int.parse(value) <= 0) {
+          return "Số lượng phải là số dương";
+        }
+        return null;
+      case ProductField.name:
+        value = (value ?? '').trim();
+        if (value.isEmpty) {
+          return "Tên sản phẩm không được để trống";
+        }
+        return null;
+    }
+  }
+
   String get lable {
     switch (this) {
       case ProductField.cover:
@@ -12,7 +43,7 @@ extension ProductFieldExtentsion on ProductField {
       case ProductField.price:
         return "Giá";
       case ProductField.quantity:
-        return "Số lượng";
+        return "Số lượng tồn kho";
     }
   }
 
@@ -23,7 +54,7 @@ extension ProductFieldExtentsion on ProductField {
       case ProductField.price:
         return "Giá";
       case ProductField.quantity:
-        return "Số lượng";
+        return "Số lượng tồn kho";
       case ProductField.cover:
         return "Chọn ảnh sản phẩm";
     }
@@ -36,30 +67,6 @@ extension ProductFieldExtentsion on ProductField {
         return TextInputType.number;
       default:
         return TextInputType.text;
-    }
-  }
-
-  String? validate(String? value) {
-    switch (this) {
-      case ProductField.cover:
-        if (value == null || value.isEmpty) return "Ảnh sản phẩm không được để trống";
-        return null;
-      case ProductField.price:
-        value = (value ?? '').trim();
-        if (value.length == 0 ) return "Giá không được để trống";
-        if (int.tryParse(value) == null || int.parse(value) <= 0)
-          return "Giá phải là số dương";
-        return null;
-      case ProductField.quantity:
-        if (value == null || value.isEmpty)
-          return "Số lượng không được để trống";
-        if (int.tryParse(value ?? '') == null || int.parse(value ?? '') <= 0)
-          return "Số lượng phải là số dương";
-        return null;
-      case ProductField.name:
-        value = (value ?? '').trim();
-        if (value.isEmpty) return "Tên sản phẩm không được để trống";
-        return null;
     }
   }
 }
