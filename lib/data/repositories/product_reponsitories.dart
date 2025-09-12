@@ -3,7 +3,6 @@ import 'package:getx_statemanagement/data/core/base_reponsitory.dart';
 import 'package:getx_statemanagement/data/core/constants.dart';
 import 'package:getx_statemanagement/data/model/product.dart';
 import 'package:getx_statemanagement/data/request/product_request.dart';
-import 'package:getx_statemanagement/data/response/product_respone.dart';
 import 'package:getx_statemanagement/data/dio/dio.dart';
 
 class ProductRepository extends BaseRepository {
@@ -14,13 +13,12 @@ class ProductRepository extends BaseRepository {
         queryParameters: request.toQueryParams(),
         options: Options(headers: {'Authorization': token}),
       );
-      final apiResponse = ApiListResponse<Product>.fromJson(
-        response.data,
-        (json) => Product.fromJson(json as Map<String, dynamic>),
-      );
-      return apiResponse.data;
+      final apiRes =
+          (response.data['data'] as List)
+              .map((json) => Product.fromJson(json as Map<String, dynamic>))
+              .toList();
+      return apiRes;
     } catch (e) {
-      print('Error fetching product list: $e');
       return [];
     }
   }
@@ -33,11 +31,8 @@ class ProductDetailRepository extends BaseRepository {
         '${ApiConfig.productDetial}$id',
         options: Options(headers: {'Authorization': token}),
       );
-      final apiRes = ApiSingleResponse<Product>.fromJson(
-        response.data,
-        (json) => Product.fromJson(json as Map<String, dynamic>),
-      );
-      return apiRes.data;
+      final apiRes = Product.fromJson(response.data['data']);
+      return apiRes;
     } catch (e) {
       // print('DioException: ${e.response?.statusCode}');
       // print('Response body: ${e.response?.data}');
